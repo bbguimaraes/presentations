@@ -1,0 +1,18 @@
+###############################################################################
+#                                 owncloud 7                                  #
+###############################################################################
+
+- Usuários
+    - Melhorias nos documentos
+        - Arquivos do microsoft word podem ser abertos, editados e salvos
+    - Notificações de atividade nos arquivos
+        - Permite selecionar as atividades exibidas
+            - Stream
+            - Email
+    - Melhoria na exibição de arquivos
+        - Lazy load
+        - Ordenação
+        - Exibição e filtragem por storage
+    - Interface responsiva
+    - Indicador de qualidade da senha
+    - Melhorias de performance

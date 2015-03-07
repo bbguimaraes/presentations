@@ -1,0 +1,37 @@
+debian installation
+===================
+
+
+Installing owncloud on a debian chroot in arch linux.
+
+Install debootstrap.
+
+    $ yaourt -S debootstrap
+
+Create the chroot (using a local mirror).
+
+    # debootstrap wheezy debian-tree/ http://ftp.br.debian.org/debian/
+
+Make a snapshot of the chroot (just in case, it takes a lot of time to download
+all packages again).
+
+    # tar -zc debian-tree -f debian-tree.tar.gz
+
+Setup root account.
+
+    # systemd-nspawn -D debian-tree
+    # passwd
+    # exit
+
+Init the system.
+
+    # systemd-nspawn -D debian-tree /sbin/init
+
+Once logged in, add repo source and key, update apt and install packages.
+
+    # echo 'deb http://download.opensuse.org/repositories/isv:ownCloud:community/Debian_7.0/ /' >> /etc/apt/sources.list.d/owncloud.list
+    # curl 'http://download.opensuse.org/repositories/isv:/ownCloud:/community/Debian_7.0/Release.key' | apt-key add -
+    # apt-get update
+    # apt-get install --no-install-recommends sqlite3 php5-sqlite owncloud
+
+Done.

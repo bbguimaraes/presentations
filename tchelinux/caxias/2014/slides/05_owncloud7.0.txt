@@ -1,0 +1,15 @@
+###############################################################################
+#                                 owncloud 7                                  #
+###############################################################################
+
+- Usuários
+    - Compartilhamento servidor-servidor
+    - Melhorias no compartilhamento
+        - Compartilhamento por grupo
+        - Filtros
+            - "Compartilhados comigo"
+            - "Arquivos que eu compartilhei"
+            - "Arquivos compartilhados com link"
+        - Exibição do dono do arquivo
+        - Administradores podem forçar senha
+        - Tempo padrão e máximo de expiração dos links de compartilhamento

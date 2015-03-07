@@ -1,0 +1,15 @@
+###############################################################################
+#                               Funcionalidades                               #
+###############################################################################
+
+- Mozilla Sync hosting - If you are a Mozilla Firefox user, all history, form
+  data, bookmarks etc. can be stored in your ownCloud server.
+
+- Connecting external storages (If you have accounts on Dropbox, GoogleDrive,
+  or Amazon S3, you can mount those storages into your ownCloud installation)
+
+- Customizable with one-click-install apps
+
+- Logging Module: supports logging of file-related actions, logs, who accessed
+  what, when and from where. (Only available in the ownCloud Business,
+  Enterprise and Education Editions)

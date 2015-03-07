@@ -1,0 +1,11 @@
+###############################################################################
+#                              A infraestrutura                               #
+###############################################################################
+
+- Clientes desktop
+    - Sincronizam os arquivos com o servidor
+    - windows, osx, linux, ios, android.
+
+- Interface web para acesso a arquivos, calendário, contatos, etc.
+
+- WebDAV (SabreDAV)

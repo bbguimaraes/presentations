@@ -1,0 +1,12 @@
+###############################################################################
+#                                 owncloud 7                                  #
+###############################################################################
+
+- Admins
+    - Melhoria no gerenciamento de usuários
+    - Acesso a storage externo
+        - FTP, Dropbox, Google Drive, sFTP, Swift, S3, WebDAV, SMB/CIFS, etc.
+    - Integração com scanner de anti-vírus externo
+    - Wizard de configuração SMTP
+    - Templates de email editáveis
+    - Scripts para migração de banco de dados

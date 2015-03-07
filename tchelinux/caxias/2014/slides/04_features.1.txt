@@ -1,0 +1,19 @@
+###############################################################################
+#                               Funcionalidades                               #
+###############################################################################
+
+- Sharing of content across groups or public URLs
+
+- Online text editor with syntax highlighting and code folding
+
+- Bookmarking
+
+- URL shortening Suite
+
+- Photo gallery
+
+- Video viewer
+
+- PDF viewer (using PDF.js)
+
+- Viewer for ODF Files (.odt, .odp, .ods)
