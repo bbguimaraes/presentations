@@ -1,0 +1,12 @@
+###############################################################################
+#                                 As pessoas                                  #
+###############################################################################
+
+- Frank Karlitschek
+    - kde developer
+    - Iniciou o desenvolvimento em janeiro de 2010.
+    - Project leader e mantainer.
+    - Co-fundador e CTO da ownCloud.inc.
+
+- ownCloud.inc
+    - Fundada em 2011.

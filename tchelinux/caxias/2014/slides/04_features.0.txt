@@ -1,0 +1,20 @@
+###############################################################################
+#                               Funcionalidades                               #
+###############################################################################
+
+- File storage in conventional directory structures or via WebDAV
+
+- Encryption of user files
+
+- Synchronization of clients running Windows (Windows XP, Vista, 7 and 8), Mac
+  OS X (10.6 or better), or Linux
+
+- Calendar (also as CalDAV)
+
+- Task scheduler
+
+- Address book (also as CardDAV)
+
+- Music streaming (through Ampache)
+
+- User and group administration (via OpenID or LDAP)

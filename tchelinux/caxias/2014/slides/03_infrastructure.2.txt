@@ -1,0 +1,11 @@
+###############################################################################
+#                              A infraestrutura                               #
+###############################################################################
+
+- Múltiplos backends de bancos de dados
+    - sqlite
+    - mariadb
+    - mysql
+    - oracle
+    - mssql
+    - postgresql

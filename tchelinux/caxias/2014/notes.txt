@@ -1,0 +1,156 @@
+Free cloud with owncloud
+========================
+
+
+The roadmap
+-----------
+
+- The presenter
+- The object of interest
+- The project
+- The people
+- The infrastructure
+- The releases
+- The features
+- The owncloud 7
+- The references
+
+
+The presenter
+-------------
+The object of interest
+----------------------
+
+Quick demo.
+
+
+The project
+-----------
+
+- [File hosting service](https://en.wikipedia.org/wiki/File_hosting_service)
+  (cyberlocker).
+- Last stable release: 7.0.2, 2014-08-28.
+    - 3.0:   2012-01-31
+    - 4.0.0: 2012-05-22
+    - 5.0.0: 2013-03-14
+    - 6.0.0: 2013-12-11
+    - 7.0.0: 2014-06-23
+    - 7.0.2: 2014-08-28
+
+
+The people
+----------
+
+- Frank Karlitschek
+    - kde developer
+    - Started development of owncloud in January 2010. Currently the project
+      leader and mantainer.
+    - Co-founder and CTO of ownCloud.inc.
+    - http://www.muktware.com/wp-content/uploads/2013/10/frank_karlitschek_11.jpg
+- ownCloud.inc
+    - Founded in 2011.
+
+
+The infrastructure
+------------------
+
+- Free software (AGPLv3).
+    - "As such, ownCloud is very similar to the widely-used Dropbox, with the
+      primary difference being that ownCloud is free and open-source, and
+      thereby allowing anyone to install and operate it without charge on a
+      private server, with no limits on storage space (except for hard disk
+      capacity) or the number of connected clients."
+- Server-side: php.
+- Desktop clients
+    - Sinchronize files with the server.
+    - windows, osx, linux, ios, android.
+- Web interface to access files, calendar, contacts, etc.
+- WebDAV (SabreDAV)
+- Multiple backend database management systems
+    - sqlite
+    - mariadb
+    - mysql
+    - oracle
+    - mssql
+    - postgresql
+
+
+The features
+------------
+
+- File storage in conventional directory structures or via WebDAV
+- Encryption of user files
+- Synchronization of clients running Windows (Windows XP, Vista, 7 and 8), Mac OS X (10.6 or better), or Linux
+- Calendar (also as CalDAV)
+- Task scheduler
+- Address book (also as CardDAV)
+- Music streaming (through Ampache)
+- User and group administration (via OpenID or LDAP)
+- Sharing of content across groups or public URLs
+- Online text editor with syntax highlighting and code folding
+- Bookmarking
+- URL shortening Suite
+- Photo gallery
+- Video viewer
+- PDF viewer (using PDF.js)
+- Viewer for ODF Files (.odt, .odp, .ods)
+- Mozilla Sync hosting - If you are a Mozilla Firefox user, all history, form data, bookmarks etc. can be stored in your ownCloud server.
+- Connecting external storages (If you have accounts on Dropbox, GoogleDrive, or Amazon S3, you can mount those storages into your ownCloud installation)
+- Customizable with one-click-install apps
+- Logging Module: supports logging of file-related actions, logs, who accessed what, when and from where. (Only available in the ownCloud Business, Enterprise and Education Editions)
+
+
+The owncloud 7
+--------------
+
+- User improvements
+    - Server to server sharing
+    - Improved sharing
+        - Sharing by group
+        - Filters
+            - "Shared with me"
+            - "Files I shared"
+            - "Files shared with link"
+        - Shared file owner displayed
+        - Admins can force password
+        - Share link default and max. expiration
+    - Improved documents capabilities
+        - .odt already supported
+        - Open word file online
+        - Edit it live
+        - Save
+        - The file gets converted back
+    - File activity notifications
+        - Select which activities are shown
+            - Stream
+            - Email
+    - Improved files view
+        - Lazy load
+        - Sorting
+        - Storage location report and filter
+    - Responsive interface
+    - Password strength indicator
+    - Speed improvements
+- Admins
+    - Improved user management
+     - External storage access
+        - FTP, Dropbox, Google Drive, sFTP, Swift, S3, WebDAV, SMB/CIFS, etc.
+    - External antivirus scanner integration
+    - SMTP configuration wizard
+    - Editable email templates
+    - Scripts for database migration
+
+
+The references
+--------------
+
+- [Project website](https://owncloud.org)
+- [Project repository](https://github.com/owncloud/)
+- [Commercial website](https://owncloud.com)
+- [Wikipedia article](https://en.wikipedia.org/wiki/OwnCloud)
+- [Frank Karlitschek wikipedia article](https://en.m.wikipedia.org/wiki/Frank_Karlitschek)
+- [Frank Karlitschek website](http://karlitschek.de/)
+- [owncloud 7 features](http://owncloud.org/seven/)
+- [openSUSE Build Service](http://software.opensuse.org/download/package?project=isv:ownCloud:community&package=owncloud)
+- [How to install ownCloud on wheezy](http://www.debiantutorials.com/how-to-install-owncloud-on-wheezy/)
+- [archwiki - owncloud](https://wiki.archlinux.org/index.php/Owncloud)

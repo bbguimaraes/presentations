@@ -1,0 +1,15 @@
+###############################################################################
+#                                Referências                                  #
+###############################################################################
+
+owncloud 7 features
+http://owncloud.org/seven/
+
+archwiki - owncloud
+https://wiki.archlinux.org/index.php/Owncloud
+
+openSUSE Build Service
+http://software.opensuse.org/download/package?project=isv:ownCloud:community&package=owncloud
+
+How to install ownCloud on wheezy
+http://www.debiantutorials.com/how-to-install-owncloud-on-wheezy/

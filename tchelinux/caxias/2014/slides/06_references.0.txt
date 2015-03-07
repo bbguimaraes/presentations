@@ -1,0 +1,15 @@
+###############################################################################
+#                                Referências                                  #
+###############################################################################
+
+Project website
+https://owncloud.org
+
+Project repository
+https://github.com/owncloud/
+
+Commercial website
+https://owncloud.com
+
+Wikipedia article
+https://en.wikipedia.org/wiki/OwnCloud
