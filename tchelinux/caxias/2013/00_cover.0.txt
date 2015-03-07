@@ -1,0 +1,12 @@
+################################################################################
+#                                    Intro                                     #
+################################################################################
+
+- Bruno Barcarol Guimarães
+    - Estudante de Ciência da Computação na Universidade de Caxias do Sul
+    - Programador na Universidade de Caxias do Sul
+        - python (django)
+        - html/css/javascript
+    - Contato:
+        - e-mail: bbgstb@gmail.com / bbguimaraes@ucs.br
+        - g+, facebook, linkedin, github...

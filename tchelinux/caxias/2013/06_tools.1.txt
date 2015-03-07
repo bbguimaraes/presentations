@@ -1,0 +1,14 @@
+################################################################################
+#                                 ferramentas                                  #
+################################################################################
+
+- watch
+    $ watch :
+    $ watch -n 1 :
+    $ watch free -m
+
+- tail -f
+    $ tail -f /tmp/tail.txt
+    $ cat /tmp/tail.txt
+    $ cat /tmp/tail.txt | sed 's/billy/jack/'
+    $ tail -f /tmp/tail.txt | sed's/billy/jack/'

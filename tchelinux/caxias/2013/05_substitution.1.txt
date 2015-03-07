@@ -1,0 +1,12 @@
+################################################################################
+#                              bash substitutions                              #
+################################################################################
+
+- substituição usando file descritptors
+    $ cat slides/00_cover.0.txt
+    $ cat slides/05_substitution.0.txt
+    $ diff <(cat slides/00_cover.0.txt) <(cat slides/05_substitution.1.txt)
+
+- como é implementado
+    $ diff <(echo billy) <(echo bob)
+    $ echo diff <(echo billy) <(echo bob)

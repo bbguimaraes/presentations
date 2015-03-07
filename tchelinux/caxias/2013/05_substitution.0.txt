@@ -1,0 +1,12 @@
+################################################################################
+#                              bash substitutions                              #
+################################################################################
+
+- utilizar a saída de um comando como parâmetros para outro comando
+    $ find /var/log
+    $ find /var/log -name '*.[0-9].*'
+    $ du -h $(find /var/log -name '*.[0-9].*' 2> /dev/null)
+
+- o comando substituído pode ser qualquer comando
+    $ find /var/log 2> /dev/null | sed 's!^/var/log!/tmp/log!' | head -3
+    $ echo $(find /var/log 2> /dev/null | sed 's!^/var/log!/tmp/log!' | head -3)

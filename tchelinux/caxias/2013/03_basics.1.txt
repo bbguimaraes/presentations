@@ -1,0 +1,15 @@
+################################################################################
+#                                 Definições                                   #
+################################################################################
+
+- o comando foi bem sucedido?
+    $ echo rule of silence
+    $ echo rule of silence > /tmp/test.txt
+    $ echo rule of silence > /tmp/test.txt; echo $?
+
+- 0?
+    $ cat /tnt
+    $ cat /tnt 2> /dev/null
+    $ cat /tnt 2> /dev/null; echo $?
+    $ if cat /tnt 2> /dev/null; then echo '=)'; else echo '=('; fi
+    $ if echo rule of silence > /tmp/test.txt; then echo '=)'; fi

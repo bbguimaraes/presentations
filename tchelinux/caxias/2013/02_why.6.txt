@@ -1,0 +1,15 @@
+################################################################################
+#                         Por que (ba)sh e gnu/linux?                          #
+################################################################################
+
+- automatização
+    - regra de três da automatização:
+        - 1ª vez: manualmente
+        - 2ª vez: manualmente?
+        - 3ª vez: automaizado
+
+- ferramentas genéricas
+
+- impiedosamente otimizadas
+
+$ man bash | grep Copyright
