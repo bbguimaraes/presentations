@@ -1,0 +1,23 @@
+################################################################################
+#                                 Definições                                   #
+################################################################################
+
+- executar um comando
+    $ date
+    $ du /var/log/syslog
+    $ du -h /var/log/syslog
+
+- executar mais de um comando
+    $ date; du -h /var/log/syslog
+
+- suprimir os erros
+    $ du -sh /tmp
+    $ du -sh /tmp 2> /dev/null
+
+- gravar em um arquivo
+    $ du -sh /tmp > /tmp/log.txt
+    $ cat /tmp/log.txt
+
+- gravar em um arquivo e suprimir os erros
+    $ du -sh /tmp > /tmp/log2.txt 2> /dev/null
+    $ cat /tmp/log2.txt

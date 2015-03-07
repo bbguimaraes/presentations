@@ -1,0 +1,11 @@
+################################################################################
+#                                 ferramentas                                  #
+################################################################################
+
+- ssh
+    $ cat slides/06_tools.0.txt | ssh localhost 'cat'
+    $ cat slides/06_tools.0.txt | ssh localhost 'cat > /tmp/tche.txt'
+    $ cat /tmp/tche.txt
+
+    $ tar -zc slides | ssh localhost 'cd /tmp; tar -zx'
+    $ find /tmp/slides

@@ -1,0 +1,9 @@
+################################################################################
+#                                   exemplos                                   #
+################################################################################
+
+$ perl -ne 'print "$ARGV\n" if length > 80' $(find -name '*.js') | uniq | wc -l
+
+$ curl "$(cat)" 2> /dev/null | python -mjson.tool
+
+$ curl "$(head -1)" 2> /dev/null | python -mjson.tool
