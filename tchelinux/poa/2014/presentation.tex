@@ -4,12 +4,13 @@
 \usepackage[utf8]{inputenc}
 % Allows including images.
 \usepackage{graphicx}
+\setcounter{tocdepth}{1}
 
 \title[Linux containers]{Linux containers}
 
 \author{Bruno Barcarol Guimarães}
 \institute[]{\textit{bbgstb@gmail.com}}
-\date{2014-12-06}
+\date{2015-07-10}
 
 \begin{document}
 
@@ -28,11 +29,23 @@
 
 \begin{frame}
     \frametitle{Visão geral - Container}
+    container != vm != lxc != docker
+\end{frame}
+
+\begin{frame}
+    \frametitle{Visão geral - Container}
+    container != vm != lxc != docker != \textbf{solução de todos os problemas}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Visão geral - Container}
     Container
     \begin{itemize}
-        \item um grupo de processos
-        \item sobre um mesmo \textit{kernel}
-        \item isolado dos outros processos
+        \item um processo (ou grupo de processos)
+        \item executando em um mesmo \textit{kernel} (\textit{i.e.} o kernel
+        não é virtualizado)
+        \item com diferentes níveis de isolamento entre os outros processos e
+        recursos desse \textit{kernel}
     \end{itemize}
 \end{frame}
 
@@ -60,34 +73,20 @@
     \includegraphics[width=1\linewidth]{img/docker-execdriver-diagram.png}
 \end{frame}
 
-\begin{frame}
-    \frametitle{Visão geral - Tecnologias}
-    \centering
-    \includegraphics[width=0.8\linewidth]{img/BetsyAcyrilcSnakeCage02.JPG}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Visão geral - Tecnologias}
-    \centering
-    \includegraphics[width=0.8\linewidth]{img/BetsyAcyrilcSnakeCage02_tux.png}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Visão geral - Tecnologias}
-    \centering
-    \includegraphics[width=0.8\linewidth]{img/BetsyAcyrilcSnakeCage02_tche_tux.png}
-\end{frame}
-
 \subsection{Vantagens e desvantages}
 
 \begin{frame}
     \frametitle{Visão geral - Vantagens}
     \begin{itemize}
+        \item tecnologia nova e em grande expansão
         \item \textit{kernel} compartilhado
             \begin{itemize}
-                \item \textit{boot} mais rápido (\textit{ms})
-                \item menor \textit{overhead}
-                \item menor utlização de recursos
+                \item \textit{hardware} não é virtualizado
+                \item inicialização mais rápida (\textit{ms})
+                \begin{itemize}
+                    \item menor \textit{overhead}
+                    \item menor utlização de recursos
+                \end{itemize}
                 \item uma única atualização
                     (\textit{kpatch}/\textit{ksplice}/\textit{live patching}?)
             \end{itemize}
@@ -97,14 +96,33 @@
 \begin{frame}
     \frametitle{Visão geral - Desvantagens}
     \begin{itemize}
+        \item tecnologia nova e em grande expansão
         \item \textit{kernel} compartilhado
         \begin{itemize}
-            \item apenas um tipo (arquitetura, sistema operacional)
-            \item apenas uma versão
+            \item \textit{hardware} não é virtualizado
+            \item apenas um tipo
+            \begin{itemize}
+                \item versão
+                \item arquitetura
+                \item sistema operacional
+            \end{itemize}
             \item \textit{kernel exploits}
-            \item segurança não era o objetivo principal
         \end{itemize}
     \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Visão geral}
+    \begin{quote}
+        There’s an additional advantage to containerizing your application. It
+        forces you to think hard about configuration, limiting the amount of
+        mutable state inside your environment and your ability to scale
+        horizontally. An exercise in switching to container-based deploys is
+        actually an exercise in good engineering practices and any extra work
+        required by Docker pays off by making your codebase better factored and
+        less brittle. Onwards to excellence, riding the blue container whale!
+    \end{quote}
+    Jan Urbański - New Relic
 \end{frame}
 
 \begin{frame}
@@ -121,20 +139,32 @@
     \frametitle{Implementação - Kernel}
     \begin{itemize}
         \item cgroups
-            \begin{itemize}
-                \item limite/reserva de recursos
-                \item \textit{accounting}
-            \end{itemize}
         \item namespaces
-            \begin{itemize}
-                \item \texttt{clone(2)}
-                \item \texttt{unshare(2)}
-                \item \texttt{setns(2)}
-            \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\subsection{cgroups}
+
+\begin{frame}
+    \frametitle{cgroups}
+    \begin{itemize}
+        \item linux 2.6.24 (2007)
+        \item limite/reserva de recursos
+        \item \textit{accounting}
+        \item \textit{audit}
     \end{itemize}
 \end{frame}
 
 \subsection{Namespaces}
+
+\begin{frame}
+    \frametitle{Namespaces}
+    \begin{itemize}
+        \item \texttt{clone(2)}
+        \item \texttt{unshare(2)}
+        \item \texttt{setns(2)}
+    \end{itemize}
+\end{frame}
 
 \begin{frame}
     \frametitle{Namespaces}
@@ -152,7 +182,7 @@
     \frametitle{Namespaces - mount}
     \begin{itemize}
         \item \texttt{CLONE\_NEWNS}
-        \item linux 2.4.19
+        \item linux 2.4.19 (2002)
         \item \texttt{mount(2)/umount(2)}
         \item processos diferentes têm visões diferentes do sistema de arquivos
         \item ``\texttt{chroot(2)} \textit{on steroids}''
@@ -164,7 +194,7 @@
     \frametitle{Namespaces - uts}
     \begin{itemize}
         \item \texttt{CLONE\_NEWUTS}
-        \item linux 2.6.19
+        \item linux 2.6.19 (2006)
         \item \texttt{uname(2)}/\texttt{sethotname(2)}/\texttt{setdomainname(2)}
     \end{itemize}
 \end{frame}
@@ -173,7 +203,7 @@
     \frametitle{Namespaces - ipc}
     \begin{itemize}
         \item \texttt{CLONE\_NEWIPC}
-        \item linux 2.6.19 / linux 2.6.30
+        \item linux 2.6.19 (2006) / linux 2.6.30 (2009)
         \item \texttt{svipc(7)}/\texttt{mq\_overview(7)}
     \end{itemize}
 \end{frame}
@@ -182,7 +212,7 @@
     \frametitle{Namespaces - pid}
     \begin{itemize}
         \item \texttt{CLONE\_NEWPID}
-        \item linux 2.6.24
+        \item linux 2.6.24 (2008)
         \item processos em \textit{containers} diferentes podem ter o mesmo pid
         \item processos só vêem outros processos do mesmo \textit{namespace}
         \item migração entre \textit{hosts}
@@ -196,7 +226,7 @@
     \frametitle{Namespaces - net}
     \begin{itemize}
         \item \texttt{CLONE\_NEWNET}
-        \item linux 2.6.24
+        \item linux 2.6.24 (2008)
         \item cada \textit{namespace} tem seus próprios
             \begin{itemize}
                 \item dispositivos de rede
@@ -213,29 +243,16 @@
     \frametitle{Namespaces - user}
     \begin{itemize}
         \item \texttt{CLONE\_NEWUSER}
-        \item linux 2.6.23
-        \item iniciado no kernel 2.6.23
-        \item finalizado no kernel 3.8
-        \item $\sim$ cinco anos
-    \end{itemize}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Namespaces - user}
-    \begin{itemize}
-        \item isolamento de uid e gid
-        \item mapeamento de uid e gid
+        \item linux 2.6.23 (2007)
+        \item finalizado no kernel 3.8 (2013) $->$ $\sim$ cinco anos
+        \item isolamento e mapeamento de uid e gid
         \item \texttt{uid 0}
-    \end{itemize}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Namespaces - user}
-    Recursivos
-    \begin{itemize}
-        \item um processo sem privilégios pode criar um \textit{namespace}
-        \item \texttt{uid 0} dentro do \textit{namespace}
-        \item ö
+        \item recursivos
+        \begin{itemize}
+            \item um processo sem privilégios pode criar um \textit{namespace}
+            \item \texttt{uid 0} dentro do \textit{namespace}
+            \item ö
+        \end{itemize}
     \end{itemize}
 \end{frame}
 
@@ -248,6 +265,25 @@
     \begin{itemize}
         \item não use
     \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Segurança - uid 0}
+    \begin{quote}
+        For repos we recognize on or after 2015-01-01, linux builds are sent to
+        our container-based infrastructure.
+    \end{quote}
+    Travis CI
+\end{frame}
+
+\begin{frame}
+    \frametitle{Segurança - uid 0}
+    \begin{quote}
+        This job is running on container-based infrastructure, which does not
+        allow use of 'sudo', setuid and setguid executables.  If you require
+        sudo, add 'sudo: required' to your .travis.yml
+    \end{quote}
+    Travis CI
 \end{frame}
 
 \subsection{Aplicações}
@@ -277,23 +313,15 @@
 
 \begin{frame}
     \frametitle{Segurança - Aplicações}
-    Outros \textit{containers}
     \begin{itemize}
-        \item \textit{bug} no código dos \textit{namespaces}
-        \item \textit{filesystem leak}
+        \item uid \textit{container} $->$ uid diferente no \textit{host}
+        \item selinux/apparmor
+        \item docker (experimental)
     \end{itemize}
 \end{frame}
 
 \begin{frame}
     \frametitle{Segurança - Aplicações}
-    \begin{itemize}
-        \item uid \textit{container} $->$ uid diferente no \textit{host}
-        \item selinux
-    \end{itemize}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Segurança}
     \begin{quote}
         ``[...] there's maybe marginal increases in practical security for
         certain kinds of deployment, and perhaps marginal decreases for others.
@@ -310,22 +338,27 @@
 
 \section{Ferramentas}
 
-\subsection{systemd-nspawn}
+\subsection{Demos}
 
 \begin{frame}
-    \frametitle{systemd-nspawn}
+    \frametitle{Ferramentas - Demos}
+    \begin{itemize}
+        \item systemd-nspawn
+        \item lxc
+        \item docker
+    \end{itemize}
 \end{frame}
 
-\subsection{lxc}
-
 \begin{frame}
-    \frametitle{lxc}
-\end{frame}
-
-\subsection{docker}
-
-\begin{frame}
-    \frametitle{docker}
+    \frametitle{Ferramentas - Futuro}
+    \begin{itemize}
+        \item Software livre
+        \item OCP (\textit{Open Container Project})
+        \item FreeBSD docker port
+        \item rkt/runc
+        \item puppet/ansible ("Glorified Shell Script")
+        \item live migration (CRIU)
+    \end{itemize}
 \end{frame}
 
 \section{Referências}
@@ -333,6 +366,14 @@
 \begin{frame}
     \frametitle{Referências}
     \begin{itemize}
+        \item
+            \href
+                {https://blog.newrelic.com/2015/06/18/zero-to-docker/}
+                {Zero to docker}
+        \item
+            \href
+                {https://www.kernel.org/doc/Documentation/cgroups/}
+                {cgroup docs}
         \item
             \href
                 {https://lwn.net/Articles/531114/}
@@ -357,6 +398,14 @@
             \href
                 {https://en.wikipedia.org/wiki/Grsecurity}
                 {grsec}
+        \item
+            \href
+                {http://www.opencontainers.org/}
+                {Open Container Project}
+        \item
+            \href
+                {https://github.com/appc/spec/blob/master/SPEC.md}
+                {App Container Specification}
     \end{itemize}
 \end{frame}
 
@@ -364,9 +413,7 @@
     \frametitle{Referências (imagens)}
     \begin{itemize}
         \item http://www.servicioswebgratis.com/wp-content/uploads/2012/08/the-linux-programming-interface.jpg
-        \item http://www.mccarthyboas.com/BetsyAcyrilcSnakeCage02.JPG
         \item http://blog.docker.com/2014/03/docker-0-9-introducing-execution-drivers-and-libcontainer/
-        \item http://tchelinux.org/media/tchelinux.svg
     \end{itemize}
 \end{frame}
 
