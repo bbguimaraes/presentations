@@ -47,25 +47,18 @@
 \begin{frame}
     \frametitle{Visão geral - Tecnologias}
     \centering
-    \includegraphics[width=1\linewidth]{img/docker_diagram_kernel.png}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Visão geral - Tecnologias}
-    \centering
-    \includegraphics[width=0.8\linewidth]{img/the-linux-programming-interface.jpg}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Visão geral - Tecnologias}
-    \centering
-    \includegraphics[width=1\linewidth]{img/docker_diagram_lxc.png}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Visão geral - Tecnologias}
-    \centering
-    \includegraphics[width=1\linewidth]{img/docker-execdriver-diagram.png}
+    \only<1>{
+        \includegraphics[width=1\linewidth]
+            {img/docker_diagram_kernel.png}
+    }
+    \only<2>{
+        \includegraphics[width=0.8\linewidth]
+            {img/the-linux-programming-interface.jpg}
+    }
+    \only<3>{
+        \includegraphics[width=1\linewidth]
+            {img/docker-execdriver-diagram.png}
+    }
 \end{frame}
 
 \subsection{Vantagens e desvantages}
@@ -149,21 +142,19 @@
 \begin{frame}
     \frametitle{namespaces}
     \begin{itemize}
-        \item \texttt{clone(2)}
-        \item \texttt{unshare(2)}
-        \item \texttt{setns(2)}
-    \end{itemize}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Namespaces}
-    \begin{itemize}
-        \item mnt (\texttt{CLONE\_NEWNS})
-        \item uts (\texttt{CLONE\_NEWUTS})
-        \item ipc (\texttt{CLONE\_NEWIPC})
-        \item pid (\texttt{CLONE\_NEWPID})
-        \item net (\texttt{CLONE\_NEWNET})
-        \item uid (\texttt{CLONE\_NEWUSER})
+        \only<1>{
+            \item \texttt{clone(2)}
+            \item \texttt{unshare(2)}
+            \item \texttt{setns(2)}
+        }
+        \only<2>{
+            \item mnt (\texttt{CLONE\_NEWNS})
+            \item uts (\texttt{CLONE\_NEWUTS})
+            \item ipc (\texttt{CLONE\_NEWIPC})
+            \item pid (\texttt{CLONE\_NEWPID})
+            \item net (\texttt{CLONE\_NEWNET})
+            \item uid (\texttt{CLONE\_NEWUSER})
+        }
     \end{itemize}
 \end{frame}
 
@@ -251,28 +242,26 @@
 
 \begin{frame}
     \frametitle{Segurança - uid 0}
-    \begin{itemize}
-        \item não use
-    \end{itemize}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Segurança - uid 0}
-    \begin{quote}
-        For repos we recognize on or after 2015-01-01, linux builds are sent to
-        our container-based infrastructure.
-    \end{quote}
-    Travis CI
-\end{frame}
-
-\begin{frame}
-    \frametitle{Segurança - uid 0}
-    \begin{quote}
-        This job is running on container-based infrastructure, which does not
-        allow use of 'sudo', setuid and setguid executables.  If you require
-        sudo, add 'sudo: required' to your .travis.yml
-    \end{quote}
-    Travis CI
+    \only<1>{
+        \begin{itemize}
+            \item não use
+        \end{itemize}
+    }
+    \only<2>{
+        \begin{quote}
+            For repos we recognize on or after 2015-01-01, linux builds are
+            sent to our container-based infrastructure.
+        \end{quote}
+        Travis CI
+    }
+    \only<3>{
+        \begin{quote}
+            This job is running on container-based infrastructure, which
+            does not allow use of 'sudo', setuid and setguid executables.
+            If you require sudo, add 'sudo: required' to your .travis.yml
+        \end{quote}
+        Travis CI
+    }
 \end{frame}
 
 \subsection{Aplicações}
@@ -288,41 +277,39 @@
 
 \begin{frame}
     \frametitle{Segurança - Aplicações}
-    syscalls
-    \begin{itemize}
-        \item e.g. \texttt{vmsplice(2)}
-        \item limitar as \textit{syscalls} disponíveis
-        \item seccomp/seccomp-bpf
-        \item \textit{capabilities}
-        \item grsec
-        \item atualizações frequentes
-    \end{itemize}
-    = reduzir a área de exposição do kernel
-\end{frame}
-
-\begin{frame}
-    \frametitle{Segurança - Aplicações}
-    \begin{itemize}
-        \item uid \textit{container} $->$ uid diferente no \textit{host}
-        \item selinux/apparmor
-        \item docker (experimental)
-    \end{itemize}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Segurança - Aplicações}
-    \begin{quote}
-        ``[...] there's maybe marginal increases in practical security for
-        certain kinds of deployment, and perhaps marginal decreases for others.
-        We end up coming back to the attack surface, and it seems inevitable
-        that that's always going to be larger in container environments. The
-        question is, does it matter? If the larger attack surface still only
-        results in one more vulnerability per thousand years, you probably
-        don't care. The aim isn't to get containers to the same level of
-        security as hypervisors, it's to get them close enough that the
-        difference doesn't matter.''
-    \end{quote}
-    Matthew Garrett
+    \only<1>{
+        syscalls
+        \begin{itemize}
+            \item e.g. \texttt{vmsplice(2)}
+            \item limitar as \textit{syscalls} disponíveis
+            \item seccomp/seccomp-bpf
+            \item \textit{capabilities}
+            \item grsec
+            \item atualizações frequentes
+        \end{itemize}
+        = reduzir a área de exposição do kernel
+    }
+    \only<2>{
+        \begin{itemize}
+            \item uid \textit{container} $->$ uid diferente no \textit{host}
+            \item selinux/apparmor
+            \item docker (experimental)
+        \end{itemize}
+    }
+    \only<3>{
+        \begin{quote}
+            ``[...] there's maybe marginal increases in practical security for
+            certain kinds of deployment, and perhaps marginal decreases for
+            others.  We end up coming back to the attack surface, and it seems
+            inevitable that that's always going to be larger in container
+            environments. The question is, does it matter? If the larger attack
+            surface still only results in one more vulnerability per thousand
+            years, you probably don't care. The aim isn't to get containers to
+            the same level of security as hypervisors, it's to get them close
+            enough that the difference doesn't matter.''
+        \end{quote}
+        Matthew Garrett
+    }
 \end{frame}
 
 \section{Ferramentas}
