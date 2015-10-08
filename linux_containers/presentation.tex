@@ -2,6 +2,7 @@
 \mode<presentation>{\usetheme{Madrid}}
 
 \usepackage[utf8]{inputenc}
+\usepackage{varwidth}
 % Allows including images.
 \usepackage{graphicx}
 \setcounter{tocdepth}{1}
@@ -234,6 +235,55 @@
             \item ö
         \end{itemize}
     \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Namespaces - demo}
+    \begin{semiverbatim}
+        \only<1>{
+# create containers
+./ns_test
+# create pairs of veths
+ip link add h1 type veth peer name c1
+ip link add h2 type veth peer name c2
+# move one to each container's namespace
+ip link set dev c1 netns /proc/$pid1/ns/net
+ip link set dev c2 netns /proc/$pid2/ns/net
+# rename each container's veth to eth0
+nsenter --net --target $pid1 ip link set dev c1 name eth0
+nsenter --net --target $pid2 ip link set dev c2 name eth0
+        }
+        \only<2>{
+# assign addresses to each container's interfaces
+nsenter -n -t $pid1 ip addr add 10.0.0.2/8 dev eth0
+nsenter -n -t $pid2 ip addr add 10.0.0.3/8 dev eth0
+nsenter -n -t $pid1 ip set eth0 up
+nsenter -n -t $pid2 ip set eth0 up
+ip link set h1 up
+ip link set h2 up
+# create a bridge and add the containers' interfaces
+brctl addbr br0
+brctl addif br0 h1 h2
+        }
+    \end{semiverbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Namespaces - demo}
+    \begin{figure}
+        \centering
+        \begin{varwidth}{\linewidth}
+            \begin{verbatim}
+ -- container0 --   -- container1 --
+|      eth0      | |      eth0      |
+ --------|-------   --------|-------
+         |                  |
+ --------|------ br0 -------|-------
+|        h1                 h2      |
+ -----------------------------------
+            \end{verbatim}
+        \end{varwidth}
+    \end{figure}
 \end{frame}
 
 \section{Segurança}
