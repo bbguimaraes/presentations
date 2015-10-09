@@ -5,7 +5,7 @@
 \usepackage{varwidth}
 % Allows including images.
 \usepackage{graphicx}
-\setcounter{tocdepth}{1}
+\setcounter{tocdepth}{2}
 
 \title[Linux containers]{Linux containers}
 
@@ -20,33 +20,34 @@
 \end{frame}
 
 \begin{frame}
-    \frametitle{Resumo}
+    \frametitle{Summary}
     \tableofcontents
 \end{frame}
 
-\section{Visão geral}
+\section{Overview}
 
-\subsection{Tecnologias}
+\subsection{Technologies}
 
 \begin{frame}
-    \frametitle{Visão geral - Container}
+    \frametitle{Overview - Container}
     container != vm != lxc != docker
 \end{frame}
 
 \begin{frame}
-    \frametitle{Visão geral - Container}
+    \frametitle{Overview - Container}
     Container
     \begin{itemize}
-        \item um processo (ou grupo de processos)
-        \item executando em um mesmo \textit{kernel} (\textit{i.e.} o kernel
-        não é virtualizado)
-        \item com diferentes níveis de isolamento entre os outros processos e
-        recursos desse \textit{kernel}
+        \item a process or group of processes
+        \item
+            executing on the same kernel (\textit{i.e. kernel not virtualized})
+        \item
+            with different levels of isolation from other processes and kernel
+            resources
     \end{itemize}
 \end{frame}
 
 \begin{frame}
-    \frametitle{Visão geral - Tecnologias}
+    \frametitle{Overview - Technologies}
     \centering
     \only<1>{
         \includegraphics[width=1\linewidth]
@@ -62,46 +63,46 @@
     }
 \end{frame}
 
-\subsection{Vantagens e desvantages}
+\subsection{\{A,disa\}dvantages}
 
 \begin{frame}
-    \frametitle{Visão geral - Vantagens}
+    \frametitle{Overview - Advantages}
     \begin{itemize}
-        \item tecnologia nova e em grande expansão
-        \item \textit{kernel} compartilhado
+        \item new and highly expanding technology
+        \item shared kernel
             \begin{itemize}
-                \item \textit{hardware} não é virtualizado
-                \item inicialização mais rápida (\textit{ms})
+                \item hardware is not virtualized
+                \item faster initialization (\textit{ms})
                 \begin{itemize}
-                    \item menor \textit{overhead}
-                    \item menor utlização de recursos
+                    \item smaller overhead
+                    \item smaller resource utilization
                 \end{itemize}
-                \item uma única atualização
+                \item single update
                     (\textit{kpatch}/\textit{ksplice}/\textit{live patching}?)
             \end{itemize}
     \end{itemize}
 \end{frame}
 
 \begin{frame}
-    \frametitle{Visão geral - Desvantagens}
+    \frametitle{Overview - Disadvantages}
     \begin{itemize}
-        \item tecnologia nova e em grande expansão
-        \item \textit{kernel} compartilhado
+        \item new and highly expanding technology
+        \item shared kernel
         \begin{itemize}
-            \item \textit{hardware} não é virtualizado
-            \item apenas um tipo
+            \item hardware is not virtualized
+            \item only one type
             \begin{itemize}
-                \item versão
-                \item arquitetura
-                \item sistema operacional
+                \item version
+                \item architecture
+                \item operating system
             \end{itemize}
-            \item \textit{kernel exploits}
+            \item kernel exploits
         \end{itemize}
     \end{itemize}
 \end{frame}
 
 \begin{frame}
-    \frametitle{Visão geral}
+    \frametitle{Overview}
     \begin{quote}
         There’s an additional advantage to containerizing your application. It
         forces you to think hard about configuration, limiting the amount of
@@ -114,7 +115,7 @@
     Jan Urbański - New Relic
 \end{frame}
 
-\section{Implementação}
+\section{Implementation}
 
 \subsection{kernel}
 
@@ -132,9 +133,9 @@
     \frametitle{cgroups}
     \begin{itemize}
         \item linux 2.6.24 (2007)
-        \item limite/reserva de recursos
-        \item \textit{accounting}
-        \item \textit{audit}
+        \item resource limit/reserve
+        \item accounting
+        \item audit
     \end{itemize}
 \end{frame}
 
@@ -165,9 +166,9 @@
         \item \texttt{CLONE\_NEWNS}
         \item linux 2.4.19 (2002)
         \item \texttt{mount(2)/umount(2)}
-        \item processos diferentes têm visões diferentes do sistema de arquivos
-        \item ``\texttt{chroot(2)} \textit{on steroids}''
-        \item compartilhamento de \textit{mount points}
+        \item different processes have different visions of the file system
+        \item ``\texttt{chroot(2)} on steroids''
+        \item sharing of mount points
     \end{itemize}
 \end{frame}
 
@@ -194,12 +195,12 @@
     \begin{itemize}
         \item \texttt{CLONE\_NEWPID}
         \item linux 2.6.24 (2008)
-        \item processos em \textit{containers} diferentes podem ter o mesmo pid
-        \item processos só vêem outros processos do mesmo \textit{namespace}
-        \item migração entre \textit{hosts}
-        \item múltiplos pid 1
-        \item mapeamento de pid
-        \item podem ser aninhados
+        \item the same pid may appear on different namespaces
+        \item processes don't see processes of other namespaces
+        \item migration between hosts
+        \item multiple pid 1
+        \item pid mapping
+        \item can be nested
     \end{itemize}
 \end{frame}
 
@@ -208,14 +209,14 @@
     \begin{itemize}
         \item \texttt{CLONE\_NEWNET}
         \item linux 2.6.24 (2008)
-        \item cada \textit{namespace} tem seus próprios
+        \item each namespace has its own
             \begin{itemize}
-                \item dispositivos de rede
-                \item endereços ip
-                \item tabelas de roteamento
+                \item network devices
+                \item ip addresses
+                \item routing tables
                 \item \texttt{/proc/net}
-                \item portas
-                \item etc
+                \item ports
+                \item etc.
             \end{itemize}
     \end{itemize}
 \end{frame}
@@ -225,14 +226,14 @@
     \begin{itemize}
         \item \texttt{CLONE\_NEWUSER}
         \item linux 2.6.23 (2007)
-        \item finalizado no kernel 3.8 (2013) $->$ $\sim$ cinco anos
-        \item isolamento e mapeamento de uid e gid
+        \item finalized on kernel 3.8 (2013) $->$ $\sim$ five years
+        \item uid and gid isolation and mapping
         \item \texttt{uid 0}
-        \item recursivos
+        \item recursive
         \begin{itemize}
-            \item um processo sem privilégios pode criar um \textit{namespace}
-            \item \texttt{uid 0} dentro do \textit{namespace}
-            \item ö
+            \item an unprivileged process can create a namespace
+            \item \texttt{uid 0} inside the namespace
+            \item<2> ö
         \end{itemize}
     \end{itemize}
 \end{frame}
@@ -286,15 +287,15 @@ brctl addif br0 h1 h2
     \end{figure}
 \end{frame}
 
-\section{Segurança}
+\section{Security}
 
 \subsection{uid 0}
 
 \begin{frame}
-    \frametitle{Segurança - uid 0}
+    \frametitle{Security - uid 0}
     \only<1>{
         \begin{itemize}
-            \item não use
+            \item don't use
         \end{itemize}
     }
     \only<2>{
@@ -314,34 +315,39 @@ brctl addif br0 h1 h2
     }
 \end{frame}
 
-\subsection{Aplicações}
+\subsection{Applications}
 
 \begin{frame}
-    \frametitle{Segurança - Aplicações}
-    A maioria dos \textit{containers} executa uma tarefa específica, ao invés
-    de um sistema completo, e a maioria dessas aplicações (apache, postgresql,
-    mongodb, redis, ...) não precisa de privilégios de root. Os riscos são os
-    mesmo que existiram até hoje: assumir que a aplicação pode fazer qualquer
-    coisa para escapar do isolamento.
+    \frametitle{Security - Applications}
+    \begin{itemize}
+        \item
+            Most containers execute a specific task, instead of a complete
+            system, and most applications (\textit{apache}, \textit{nginx},
+            \textit{postgresql}, \textit{redis}, ...) don't need \textit{root}
+            privileges.
+        \item
+            The risks are the same as before: assume the application can do
+            anything to escape isolation.
+    \end{itemize}
 \end{frame}
 
 \begin{frame}
-    \frametitle{Segurança - Aplicações}
+    \frametitle{Security - Applications}
     \only<1>{
         syscalls
         \begin{itemize}
             \item e.g. \texttt{vmsplice(2)}
-            \item limitar as \textit{syscalls} disponíveis
+            \item limits the \textit{syscalls} available
             \item seccomp/seccomp-bpf
             \item \textit{capabilities}
             \item grsec
-            \item atualizações frequentes
+            \item constant updates
         \end{itemize}
-        = reduzir a área de exposição do kernel
+        = reduce kernel exposure
     }
     \only<2>{
         \begin{itemize}
-            \item uid \textit{container} $->$ uid diferente no \textit{host}
+            \item container uid $->$ different host uid
             \item selinux/apparmor
             \item docker (experimental)
         \end{itemize}
@@ -362,12 +368,12 @@ brctl addif br0 h1 h2
     }
 \end{frame}
 
-\section{Ferramentas}
+\section{Tools}
 
 \begin{frame}
-    \frametitle{Ferramentas - Futuro}
+    \frametitle{Tools - Future}
     \begin{itemize}
-        \item Software livre
+        \item Free software
         \item OCP (\textit{Open Container Project})
         \item FreeBSD docker port
         \item rkt/runc
@@ -376,10 +382,10 @@ brctl addif br0 h1 h2
     \end{itemize}
 \end{frame}
 
-\section{Referências}
+\section{References}
 
 \begin{frame}
-    \frametitle{Referências}
+    \frametitle{References}
     \begin{itemize}
         \item
             \href
@@ -425,7 +431,7 @@ brctl addif br0 h1 h2
 \end{frame}
 
 \begin{frame}
-    \frametitle{Referências (imagens)}
+    \frametitle{References (images)}
     \begin{itemize}
         \item http://www.servicioswebgratis.com/wp-content/uploads/2012/08/the-linux-programming-interface.jpg
         \item http://blog.docker.com/2014/03/docker-0-9-introducing-execution-drivers-and-libcontainer/
