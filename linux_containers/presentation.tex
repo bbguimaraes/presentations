@@ -6,6 +6,9 @@
 % Allows including images.
 \usepackage{graphicx}
 \setcounter{tocdepth}{2}
+%% Display notes.
+%\usepackage{pgfpages}
+%\setbeameroption{show notes on second screen}
 
 \title[Linux containers]{Linux containers}
 
@@ -31,6 +34,23 @@
 \begin{frame}
     \frametitle{Container}
     container != vm != lxc != docker
+    \note{
+        Containers and virtual machines are usually compared as "just two types
+        virtualization techniques", but have fundamental differences that have
+        to be evaluated when considering their application.
+        \\~\\
+        There is even confusion as to what containers are exactly.  It doesn't
+        help that there is a project called "linux containers" (abbreviated
+        "lxc") that is an implementation of containers.  Another common
+        misconception is that containers started with (or even that they are
+        limited or equal to) docker.
+        \\~\\
+        Containers are not a new technology.  The ideia was born in 2005 on the
+        Solaris operating system from Sun Microsystems and still lives in
+        OpenSolaris and BSD derivatives.  They aren't even a new technology in
+        Linux: most of the tools used to implement containers have been part of
+        the system since the last decade.
+    }
 \end{frame}
 
 \begin{frame}
@@ -60,6 +80,21 @@
     \only<3>{
         \includegraphics[width=1\linewidth]
             {img/docker-execdriver-diagram.png}
+    }
+    \note<1>{
+        Most of the tools that are used to implement containers have been in
+        the kernel for years.
+    }
+    \note<2>{
+        But those are low-level tools that require some level of systems
+        programming.
+    }
+    \note<3>{
+        The change that led to the recent popularization of containers was the
+        development of systems that make use of these tools while providing a
+        user (or developer) interface that is much simpler, inspired by web
+        application development.  Dotcloud, before becoming Docker, was a PaaS
+        company.
     }
 \end{frame}
 
@@ -159,6 +194,29 @@
             \item uid (\texttt{CLONE\_NEWUSER})
         }
     \end{itemize}
+    \note<1>{
+        Namespaces are an isolation facility provided by the kernel.  They are
+        at the core of containers and are responsible for the isolation that
+        allows processes to execute on the same machine without interfering
+        with each other.
+        \\~\\
+        Namespaces can be manipulated using three system calls:
+        \begin{itemize}
+            \item
+                \texttt{unshare(2)} creates a namespace and associates the
+                process to it.
+            \item
+                \texttt{clone(2)} is similar to a \texttt{fork(2)} followed by
+                an \texttt{unshare(2)}.
+            \item
+                \texttt{setns(2)} associates a process with an existing
+                namespace.
+        \end{itemize}
+    }
+    \note<2>{
+        Each of this syscalls takes a \texttt{flag} argument which includes
+        these values for selecting which namespace(s) should created/joined.
+    }
 \end{frame}
 
 \begin{frame}
@@ -270,6 +328,19 @@ brctl addbr br0
 brctl addif br0 h1 h2
         }
     \end{semiverbatim}
+    \note<1>{
+        This demo shows how multiple network namespaces can all be connected.
+        Outside the namespaces, for each container:
+        \begin{itemize}
+            \item a pair of \texttt{veth}'s is created
+            \item one of the endpoints is moved to the network namespace
+            \item the interface name inside the namespace is changed to "eth0"
+            \item an address is assigned to it
+        \end{itemize}
+        Finally, a bridge interface is created and the other endpoints of all
+        the pairs are added to it.  This bridge routes packets coming from/to
+        the veth pairs as if they were connected by a layer 2 hub.
+    }
 \end{frame}
 
 \begin{frame}[fragile]
@@ -362,6 +433,22 @@ brctl addif br0 h1 h2
             enough that the difference doesn't matter.''
         \end{quote}
         Matthew Garrett
+    }
+    \note<1>{
+        The big difference in the surface of attack between virtual machines
+        and containers is the kernel.  On a virtual machine, an attacker that
+        is able to exploit the (guest) kernel still has to break out to the
+        hypervisor.  Since containers share the same kernel, an exploit gives
+        direct access to the system.
+        \\~\\
+        Since the interface to the kernel is the system calls, a big part in
+        securing containers involves hardening them.  Although kernel exploits
+        are rare, they exist: the \texttt{vmsplice} one is a recent example.
+        Limiting the syscalls available can be done using the \texttt{seccomp}
+        family of syscalls.  Capabilities, selinx and apparmor reduce the
+        impact of an exploit by clearly delimiting the actions a process can
+        take.  The grsec kernel is a series of out-of-tree patches that
+        prioritize security.
     }
 \end{frame}
 
