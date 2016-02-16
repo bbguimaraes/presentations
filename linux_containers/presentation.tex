@@ -72,6 +72,99 @@
 
 \begin{frame}
     \frametitle{Container}
+    \begin{quote}
+        Virtualization is an euphemism for "pathological lying".
+    \end{quote}
+    Bryan Cantrill
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Container}
+    No virtualization:
+    \begin{figure}
+        \centering
+        \begin{varwidth}{\linewidth}
+            \begin{verbatim}
+ -----------------------------
+| process   process   process |
+|-----------------------------|
+|           kernel            |
+|-----------------------------|
+|          hardware           |
+ -----------------------------
+            \end{verbatim}
+        \end{varwidth}
+    \end{figure}
+    \note{
+        With no virtualization, processes that want to talk to the hardware or
+        to other processes just do it: the only limitations are file
+        permissions, capabilities, etc.
+    }
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Container}
+    Hardware-level virtualization:
+    \begin{figure}
+        \centering
+        \begin{varwidth}{\linewidth}
+            \begin{verbatim}
+
+ --- vm ---   ------- vm --------
+| process  | | process   process |
+|----------| |-------------------|
+| guest os | |     guest os      |
+|----------| |-------------------|
+| hardware | |     hardware      |
+|--------------------------------|
+|           hypervisor           |
+|--------------------------------|
+|             kernel             |
+|--------------------------------|
+|            hardware            |
+ --------------------------------
+            \end{verbatim}
+        \end{varwidth}
+    \end{figure}
+    \note{
+        Hardware-level virtualization emulates the hardware of a physical
+        machine and runs another operating system inside it.  Management of the
+        guests and access to the host's hardware or to other guests is handled
+        by a process on the host, called the "hypervisor".
+        \\~\\
+        Requests from the guests to the (virtual) hardware are trapped by the
+        hypervisor, which has to maintain the "illusion" that they are
+        executing on real machines.
+    }
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Container}
+    Containers (OS-level virtualization):
+    \begin{figure}
+        \centering
+        \begin{varwidth}{\linewidth}
+            \begin{verbatim}
+ - container -   ---- container ----
+|   process   | | process   process |
+|-----------------------------------|
+|              kernel               |
+|-----------------------------------|
+|             hardware              |
+ -----------------------------------
+            \end{verbatim}
+        \end{varwidth}
+    \end{figure}
+    \note{
+        OS-level virtualization doesn't involve any emulation: when a process
+        talks to the hardware, it is talking to the real hardware.  The kernel
+        provides tools to limit how much of the system is available to be used
+        by the containers.
+    }
+\end{frame}
+
+\begin{frame}
+    \frametitle{Technologies}
     \centering
     \only<1>{
         \includegraphics[width=1\linewidth]
@@ -406,6 +499,7 @@ $ awk '/cgroup/{sub(".*,","",$4);print$2,$3,$4}' /proc/mounts
         \item \texttt{uname(2)}
         \item \texttt{sethotname(2)}
         \item \texttt{setdomainname(2)}
+        \item Unix Timesharing System
     \end{itemize}
 \end{frame}
 
@@ -415,6 +509,10 @@ $ awk '/cgroup/{sub(".*,","",$4);print$2,$3,$4}' /proc/mounts
         \item \texttt{CLONE\_NEWIPC}
         \item linux 2.6.19 (2006) / linux 2.6.30 (2009)
         \item \texttt{svipc(7)}/\texttt{mq\_overview(7)}
+        \item isolation for the 32-bit resource ids
+        \item
+            sysV IPC has been mostly superseded, but some programs (e.g.
+            postgresql) still use it
     \end{itemize}
 \end{frame}
 
@@ -423,12 +521,21 @@ $ awk '/cgroup/{sub(".*,","",$4);print$2,$3,$4}' /proc/mounts
     \begin{itemize}
         \item \texttt{CLONE\_NEWPID}
         \item linux 2.6.24 (2008)
+        \item each pid inside a namespace is mapped to a pid outside
         \item the same pid may appear on different namespaces
         \item processes don't see processes of other namespaces
+        \item
+            offers protection from pid-based syscalls like \texttt{kill(2)},
+            \texttt{ptrace(2)}, etc
+        \item
+            \texttt{procfs} only shows information related to processes on the
+            namespace
         \item migration between hosts
-        \item multiple pid 1
-        \item pid mapping
-        \item can be nested
+        \item each namespace has its own pid 1
+        \item
+            can be nested: a parent namespace can see and affect processes on
+            child namespaces; processes on a child namespace don't see and
+            can't do anything to processes on the parent
     \end{itemize}
 \end{frame}
 
@@ -439,13 +546,19 @@ $ awk '/cgroup/{sub(".*,","",$4);print$2,$3,$4}' /proc/mounts
         \item linux 2.6.24 (2008)
         \item each namespace has its own
             \begin{itemize}
-                \item network devices
+                \item network devices (including \texttt{lo})
                 \item ip addresses
                 \item routing tables
                 \item \texttt{/proc/net}
                 \item ports
                 \item etc.
             \end{itemize}
+        \item
+            communication with the host or with other namespaces can be
+            implemented using \texttt{veth} pairs and/or bridge interfaces
+        \item
+            \texttt{INADDR\_ANY} (a.k.a. \texttt{0.0.0.0}) means "any address
+            on the current namespace"
     \end{itemize}
 \end{frame}
 
@@ -652,6 +765,10 @@ brctl addif br0 h1 h2
             \href
                 {https://lwn.net/Articles/268783/}
                 {vmsplice(): the making of a local root exploit}
+        \item
+            \href
+                {https://www.youtube.com/watch?v=0T2XFSALOaU}
+                {Docker in Production: Tales From the Engine Room [video]}
     \end{itemize}
 \end{frame}
 
