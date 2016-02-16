@@ -29,12 +29,12 @@
 \subsection{Technologies}
 
 \begin{frame}
-    \frametitle{Overview - Container}
+    \frametitle{Container}
     container != vm != lxc != docker
 \end{frame}
 
 \begin{frame}
-    \frametitle{Overview - Container}
+    \frametitle{Container}
     Container
     \begin{itemize}
         \item a process or group of processes
@@ -47,7 +47,7 @@
 \end{frame}
 
 \begin{frame}
-    \frametitle{Overview - Technologies}
+    \frametitle{Container}
     \centering
     \only<1>{
         \includegraphics[width=1\linewidth]
@@ -66,17 +66,17 @@
 \subsection{\{A,disa\}dvantages}
 
 \begin{frame}
-    \frametitle{Overview - Advantages}
+    \frametitle{Advantages}
     \begin{itemize}
-        \item new and highly expanding technology
+        \item new and highly expanding technologies
         \item shared kernel
             \begin{itemize}
                 \item hardware is not virtualized
-                \item faster initialization (\textit{ms})
                 \begin{itemize}
                     \item smaller overhead
                     \item smaller resource utilization
                 \end{itemize}
+                \item faster initialization (\textit{ms})
                 \item single update
                     (\textit{kpatch}/\textit{ksplice}/\textit{live patching}?)
             \end{itemize}
@@ -84,9 +84,9 @@
 \end{frame}
 
 \begin{frame}
-    \frametitle{Overview - Disadvantages}
+    \frametitle{Disadvantages}
     \begin{itemize}
-        \item new and highly expanding technology
+        \item new and highly expanding technologies
         \item shared kernel
         \begin{itemize}
             \item hardware is not virtualized
@@ -107,10 +107,12 @@
         There’s an additional advantage to containerizing your application. It
         forces you to think hard about configuration, limiting the amount of
         mutable state inside your environment and your ability to scale
-        horizontally. An exercise in switching to container-based deploys is
-        actually an exercise in good engineering practices and any extra work
-        required by Docker pays off by making your codebase better factored and
-        less brittle. Onwards to excellence, riding the blue container whale!
+        horizontally.
+        \\~\\
+        An exercise in switching to container-based deploys is actually an
+        exercise in good engineering practices and any extra work required by
+        Docker pays off by making your codebase better factored and less
+        brittle.
     \end{quote}
     Jan Urbański - New Relic
 \end{frame}
@@ -133,9 +135,8 @@
     \frametitle{cgroups}
     \begin{itemize}
         \item linux 2.6.24 (2007)
-        \item resource limit/reserve
-        \item accounting
-        \item audit
+        \item resource limiting/reservation
+        \item accounting/auditing
     \end{itemize}
 \end{frame}
 
@@ -145,8 +146,8 @@
     \frametitle{namespaces}
     \begin{itemize}
         \only<1>{
-            \item \texttt{clone(2)}
             \item \texttt{unshare(2)}
+            \item \texttt{clone(2)}
             \item \texttt{setns(2)}
         }
         \only<2>{
@@ -161,7 +162,7 @@
 \end{frame}
 
 \begin{frame}
-    \frametitle{namespaces - mount}
+    \frametitle{mount}
     \begin{itemize}
         \item \texttt{CLONE\_NEWNS}
         \item linux 2.4.19 (2002)
@@ -173,16 +174,18 @@
 \end{frame}
 
 \begin{frame}
-    \frametitle{namespaces - uts}
+    \frametitle{uts}
     \begin{itemize}
         \item \texttt{CLONE\_NEWUTS}
         \item linux 2.6.19 (2006)
-        \item \texttt{uname(2)}/\texttt{sethotname(2)}/\texttt{setdomainname(2)}
+        \item \texttt{uname(2)}
+        \item \texttt{sethotname(2)}
+        \item \texttt{setdomainname(2)}
     \end{itemize}
 \end{frame}
 
 \begin{frame}
-    \frametitle{namespaces - ipc}
+    \frametitle{ipc}
     \begin{itemize}
         \item \texttt{CLONE\_NEWIPC}
         \item linux 2.6.19 (2006) / linux 2.6.30 (2009)
@@ -191,7 +194,7 @@
 \end{frame}
 
 \begin{frame}
-    \frametitle{namespaces - pid}
+    \frametitle{pid}
     \begin{itemize}
         \item \texttt{CLONE\_NEWPID}
         \item linux 2.6.24 (2008)
@@ -205,7 +208,7 @@
 \end{frame}
 
 \begin{frame}
-    \frametitle{namespaces - net}
+    \frametitle{net}
     \begin{itemize}
         \item \texttt{CLONE\_NEWNET}
         \item linux 2.6.24 (2008)
@@ -222,7 +225,7 @@
 \end{frame}
 
 \begin{frame}
-    \frametitle{namespaces - user}
+    \frametitle{user}
     \begin{itemize}
         \item \texttt{CLONE\_NEWUSER}
         \item linux 2.6.23 (2007)
@@ -239,7 +242,7 @@
 \end{frame}
 
 \begin{frame}[fragile]
-    \frametitle{Namespaces - demo}
+    \frametitle{demo}
     \begin{semiverbatim}
         \only<1>{
 # create containers
@@ -270,7 +273,7 @@ brctl addif br0 h1 h2
 \end{frame}
 
 \begin{frame}[fragile]
-    \frametitle{Namespaces - demo}
+    \frametitle{demo}
     \begin{figure}
         \centering
         \begin{varwidth}{\linewidth}
@@ -292,7 +295,7 @@ brctl addif br0 h1 h2
 \subsection{uid 0}
 
 \begin{frame}
-    \frametitle{Security - uid 0}
+    \frametitle{uid 0}
     \only<1>{
         \begin{itemize}
             \item don't use
@@ -318,7 +321,7 @@ brctl addif br0 h1 h2
 \subsection{Applications}
 
 \begin{frame}
-    \frametitle{Security - Applications}
+    \frametitle{Applications}
     \begin{itemize}
         \item
             Most containers execute a specific task, instead of a complete
@@ -332,27 +335,21 @@ brctl addif br0 h1 h2
 \end{frame}
 
 \begin{frame}
-    \frametitle{Security - Applications}
+    \frametitle{Applications}
     \only<1>{
         syscalls
         \begin{itemize}
             \item e.g. \texttt{vmsplice(2)}
             \item limits the \textit{syscalls} available
             \item seccomp/seccomp-bpf
-            \item \textit{capabilities}
+            \item \texttt{capabilities(7)}
+            \item \texttt{selinux(8)}/\texttt{apparmor(7)}
             \item grsec
             \item constant updates
         \end{itemize}
         = reduce kernel exposure
     }
     \only<2>{
-        \begin{itemize}
-            \item container uid $->$ different host uid
-            \item selinux/apparmor
-            \item docker (experimental)
-        \end{itemize}
-    }
-    \only<3>{
         \begin{quote}
             ``[...] there's maybe marginal increases in practical security for
             certain kinds of deployment, and perhaps marginal decreases for
@@ -368,20 +365,6 @@ brctl addif br0 h1 h2
     }
 \end{frame}
 
-\section{Tools}
-
-\begin{frame}
-    \frametitle{Tools - Future}
-    \begin{itemize}
-        \item Free software
-        \item OCP (\textit{Open Container Project})
-        \item FreeBSD docker port
-        \item rkt/runc
-        \item puppet/ansible ("Glorified Shell Script")
-        \item live migration (CRIU)
-    \end{itemize}
-\end{frame}
-
 \section{References}
 
 \begin{frame}
@@ -393,8 +376,12 @@ brctl addif br0 h1 h2
                 {Zero to docker}
         \item
             \href
-                {https://www.kernel.org/doc/Documentation/cgroups/}
-                {cgroup docs}
+                {https://www.kernel.org/doc/Documentation/cgroups-v1/}
+                {cgroups docs}
+        \item
+            \href
+                {https://www.kernel.org/doc/Documentation/cgroups-v2.txt}
+                {cgroups-v2 docs}
         \item
             \href
                 {https://lwn.net/Articles/531114/}
@@ -411,30 +398,20 @@ brctl addif br0 h1 h2
             \href
                 {https://lwn.net/Articles/268783/}
                 {vmsplice(): the making of a local root exploit}
-        \item
-            \href
-                {https://en.wikipedia.org/wiki/Seccomp}
-                {seccomp}
-        \item
-            \href
-                {https://en.wikipedia.org/wiki/Grsecurity}
-                {grsec}
-        \item
-            \href
-                {http://www.opencontainers.org/}
-                {Open Container Project}
-        \item
-            \href
-                {https://github.com/appc/spec/blob/master/SPEC.md}
-                {App Container Specification}
     \end{itemize}
 \end{frame}
 
 \begin{frame}
     \frametitle{References (images)}
     \begin{itemize}
-        \item http://www.servicioswebgratis.com/wp-content/uploads/2012/08/the-linux-programming-interface.jpg
-        \item http://blog.docker.com/2014/03/docker-0-9-introducing-execution-drivers-and-libcontainer/
+        \item
+            \href
+                {http://www.servicioswebgratis.com/wp-content/uploads/2012/08/the-linux-programming-interface.jpg}
+                {The Linux Programming Interface}
+        \item
+            \href
+                {http://blog.docker.com/2014/03/docker-0-9-introducing-execution-drivers-and-libcontainer/}
+                {Docker drivers}
     \end{itemize}
 \end{frame}
 
