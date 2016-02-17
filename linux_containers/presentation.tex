@@ -9,6 +9,10 @@
 %% Display notes.
 %\usepackage{pgfpages}
 %\setbeameroption{show notes on second screen}
+% Stop messing with my single quotes!
+\usepackage{upquote}
+% Multi-column itemize.
+\usepackage{multicol}
 
 \title[Linux containers]{Linux containers}
 
@@ -172,6 +176,169 @@
         \item linux 2.6.24 (2007)
         \item resource limiting/reservation
         \item accounting/auditing
+    \end{itemize}
+\end{frame}
+
+\subsection{cgroups}
+
+\begin{frame}[fragile]
+    \frametitle{cgroups}
+    \verb|awk 'NR>1{print$1}' /proc/cgroups|
+    \begin{multicols}{3}
+        \begin{itemize}
+            \item cpuset
+            \item cpu
+            \item cpuacct
+            \item blkio
+            \item memory
+            \item devices
+            \item freezer
+            \item net\_cls
+            \item pids
+        \end{itemize}
+    \end{multicols}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{cgroups}
+    \begin{verbatim}
+$ awk '/cgroup/{sub(".*,","",$4);print$2,$3,$4}' /proc/mounts
+/sys/fs/cgroup tmpfs mode=755
+/sys/fs/cgroup/systemd cgroup name=systemd
+/sys/fs/cgroup/blkio cgroup blkio
+/sys/fs/cgroup/cpu,cpuacct cgroup cpuacct
+/sys/fs/cgroup/net_cls cgroup net_cls
+/sys/fs/cgroup/pids cgroup pids
+/sys/fs/cgroup/cpuset cgroup cpuset
+/sys/fs/cgroup/devices cgroup devices
+/sys/fs/cgroup/freezer cgroup freezer
+/sys/fs/cgroup/memory cgroup memory
+    \end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{cpuset}
+    \begin{itemize}
+        \item \verb|cat /sys/fs/cgroup/cpuset/cpuset.mems|
+        \item \verb|echo 0-1 > /sys/fs/cgroup/cpuset/cpuset.mems|
+        \item \verb|cat /sys/fs/cgroup/cpuset/cpuset.cpus|
+        \item \verb|echo 3-5 > /sys/fs/cgroup/cpuset/cpuset.cpus|
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{cpu}
+    \begin{itemize}
+        \item \verb|cat /sys/fs/cgroup/cpu/cpu.shares|
+        \item \verb|echo 1024 > /sys/fs/cgroup/cpu/cpu.shares|
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{cpuacct}
+    \begin{itemize}
+        \item \verb|cat /sys/fs/cgroup/cpuacct/cpuacct.stat|
+        \item \verb|cat /sys/fs/cgroup/cpuacct/cpuacct.usage|
+        \item \verb|cat /sys/fs/cgroup/cpuacct/cpuacct.usage_percpu|
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{blkio}
+    \verb!ls /sys/fs/cgroup/blkio/blkio.* | grep -v '_recursive'!
+    \begin{multicols}{2}
+        \begin{itemize}
+            \item blkio.io\_merged
+            \item blkio.io\_queued
+            \item blkio.io\_service\_bytes
+            \item blkio.io\_serviced
+            \item blkio.io\_service\_time
+            \item blkio.io\_wait\_time
+            \item blkio.leaf\_weight
+            \item blkio.leaf\_weight\_device
+            \item blkio.reset\_stats
+            \item blkio.sectors
+            \item blkio.throttle.io\_service\_bytes
+            \item blkio.throttle.io\_serviced
+            \item blkio.throttle.read\_bps\_device
+            \item blkio.throttle.read\_iops\_device
+            \item blkio.throttle.write\_bps\_device
+            \item blkio.throttle.write\_iops\_device
+            \item blkio.time
+            \item blkio.weight
+            \item blkio.weight\_device
+        \end{itemize}
+    \end{multicols}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{memory}
+    \begin{itemize}
+        \item \verb|cat /sys/fs/cgroup/memory/memory.usage_in_bytes|
+        \item \verb|cat /sys/fs/cgroup/memory/memory.limit_in_bytes|
+        \item \verb|echo $x > /sys/fs/cgroup/memory/memory.limit_in_bytes|
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{memory}
+    \verb|awk '!/^total_/{print$1}' /sys/fs/cgroup/memory/memory.stat|
+    \begin{multicols}{2}
+        \begin{itemize}
+            \item cache
+            \item rss
+            \item rss\_huge
+            \item mapped\_file
+            \item dirty
+            \item writeback
+            \item swap
+            \item pgpgin
+            \item pgpgout
+            \item pgfault
+            \item pgmajfault
+            \item inactive\_anon
+            \item active\_anon
+            \item inactive\_file
+            \item active\_file
+            \item unevictable
+            \item hierarchical\_memory\_limit
+            \item hierarchical\_memsw\_limit
+        \end{itemize}
+    \end{multicols}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{devices}
+    \begin{itemize}
+        \item \verb|cat /sys/fs/cgroup/devices/devices.list|
+        \item \verb|echo 'a *:* rwm' > /sys/fs/cgroup/devices/devices.allow|
+        \item \verb|echo a > /sys/fs/cgroup/devices/devices.deny|
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{freezer}
+    \begin{itemize}
+        \item \verb|cat /sys/fs/cgroup/$child/freezer.state|
+        \item \verb|echo FROZEN> /sys/fs/cgroup/$child/freezer.state|
+        \item \verb|echo THAWED > /sys/fs/cgroup/$child/freezer.state|
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{net\_cls}
+    \begin{itemize}
+        \item \verb|cat /sys/fs/cgroup/net_cls/net_cls.classid|
+        \item \verb|maj=0001; min=0001; cls=0x$maj$min|
+        \item \verb|echo $cls > /sys/fs/cgroup/net_cls/net_cls.classid|
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{pid}
+    \begin{itemize}
+        \item \verb|cat /sys/fs/cgroup/pids/pids.current|
+        \item \verb|echo 2 > /sys/fs/cgroup/pids/pids.max|
     \end{itemize}
 \end{frame}
 
