@@ -1,5 +1,8 @@
 \documentclass{beamer}
-\mode<presentation>{\usetheme{Madrid}}
+\mode<presentation>{
+    \usetheme{Madrid}
+    \setbeamertemplate{footline}{}
+    \setbeamertemplate{navigation symbols}{}}
 
 \usepackage[utf8]{inputenc}
 \usepackage{varwidth}
@@ -14,10 +17,19 @@
 % Multi-column itemize.
 \usepackage{multicol}
 
-\title[Linux containers]{Linux containers}
+\newcommand{\autotitle}
+{\frametitle{
+    \secname
+    \ifx\insertsubsection\empty
+    \else
+        /\subsecname
+        \ifx\insertsubsubsection\empty\else/\subsubsecname\fi
+    \fi}}
+
+\title{Linux containers}
 
 \author{Bruno Barcarol Guimarães}
-\institute[]{\textit{bbgstb@gmail.com}}
+\institute[]{\textit{bbguimaraes.com}}
 \date{2015-07-10}
 
 \begin{document}
@@ -26,17 +38,17 @@
     \titlepage
 \end{frame}
 
+\section{overview}
+
 \begin{frame}
-    \frametitle{Summary}
+    \autotitle
     \tableofcontents
 \end{frame}
 
-\section{Overview}
-
-\subsection{Technologies}
+\subsection{technologies}
 
 \begin{frame}
-    \frametitle{Container}
+    \autotitle
     container != vm != lxc != docker
     \note{
         Containers and virtual machines are usually compared as "just two types
@@ -57,9 +69,10 @@
     }
 \end{frame}
 
+\subsubsection{container}
+
 \begin{frame}
-    \frametitle{Container}
-    Container
+    \autotitle
     \begin{itemize}
         \item a process or group of processes
         \item
@@ -71,7 +84,7 @@
 \end{frame}
 
 \begin{frame}
-    \frametitle{Container}
+    \autotitle
     \begin{quote}
         Virtualization is an euphemism for "pathological lying".
     \end{quote}
@@ -79,7 +92,7 @@
 \end{frame}
 
 \begin{frame}[fragile]
-    \frametitle{Container}
+    \autotitle
     No virtualization:
     \begin{figure}
         \centering
@@ -103,7 +116,7 @@
 \end{frame}
 
 \begin{frame}[fragile]
-    \frametitle{Container}
+    \autotitle
     Hardware-level virtualization:
     \begin{figure}
         \centering
@@ -139,7 +152,7 @@
 \end{frame}
 
 \begin{frame}[fragile]
-    \frametitle{Container}
+    \autotitle
     Containers (OS-level virtualization):
     \begin{figure}
         \centering
@@ -164,7 +177,7 @@
 \end{frame}
 
 \begin{frame}
-    \frametitle{Technologies}
+    \autotitle
     \centering
     \only<1>{
         \includegraphics[width=1\linewidth]
@@ -195,10 +208,12 @@
     }
 \end{frame}
 
-\subsection{\{A,disa\}dvantages}
+\subsection{pros-cons}
+
+\subsubsection{pros}
 
 \begin{frame}
-    \frametitle{Advantages}
+    \autotitle
     \begin{itemize}
         \item new and highly expanding technologies
         \item shared kernel
@@ -215,8 +230,10 @@
     \end{itemize}
 \end{frame}
 
+\subsubsection{cons}
+
 \begin{frame}
-    \frametitle{Disadvantages}
+    \autotitle
     \begin{itemize}
         \item new and highly expanding technologies
         \item shared kernel
@@ -234,7 +251,7 @@
 \end{frame}
 
 \begin{frame}
-    \frametitle{Overview}
+    \autotitle
     \begin{quote}
         There’s an additional advantage to containerizing your application. It
         forces you to think hard about configuration, limiting the amount of
@@ -249,12 +266,10 @@
     Jan Urbański - New Relic
 \end{frame}
 
-\section{Implementation}
-
-\subsection{kernel}
+\section{implementation}
 
 \begin{frame}
-    \frametitle{kernel}
+    \autotitle
     \begin{itemize}
         \item cgroups
         \item namespaces
@@ -264,7 +279,7 @@
 \subsection{cgroups}
 
 \begin{frame}
-    \frametitle{cgroups}
+    \autotitle
     \begin{itemize}
         \item linux 2.6.24 (2007)
         \item resource limiting/reservation
@@ -272,10 +287,8 @@
     \end{itemize}
 \end{frame}
 
-\subsection{cgroups}
-
 \begin{frame}[fragile]
-    \frametitle{cgroups}
+    \autotitle
     \verb|awk 'NR>1{print$1}' /proc/cgroups|
     \begin{multicols}{3}
         \begin{itemize}
@@ -293,7 +306,7 @@
 \end{frame}
 
 \begin{frame}[fragile]
-    \frametitle{cgroups}
+    \autotitle
     \begin{verbatim}
 $ awk '/cgroup/{sub(".*,","",$4);print$2,$3,$4}' /proc/mounts
 /sys/fs/cgroup tmpfs mode=755
@@ -309,8 +322,10 @@ $ awk '/cgroup/{sub(".*,","",$4);print$2,$3,$4}' /proc/mounts
     \end{verbatim}
 \end{frame}
 
+\subsubsection{cpuset}
+
 \begin{frame}[fragile]
-    \frametitle{cpuset}
+    \autotitle
     \begin{itemize}
         \item \verb|cat /sys/fs/cgroup/cpuset/cpuset.mems|
         \item \verb|echo 0-1 > /sys/fs/cgroup/cpuset/cpuset.mems|
@@ -319,16 +334,20 @@ $ awk '/cgroup/{sub(".*,","",$4);print$2,$3,$4}' /proc/mounts
     \end{itemize}
 \end{frame}
 
+\subsubsection{cpu}
+
 \begin{frame}[fragile]
-    \frametitle{cpu}
+    \autotitle
     \begin{itemize}
         \item \verb|cat /sys/fs/cgroup/cpu/cpu.shares|
         \item \verb|echo 1024 > /sys/fs/cgroup/cpu/cpu.shares|
     \end{itemize}
 \end{frame}
 
+\subsubsection{cpuacct}
+
 \begin{frame}[fragile]
-    \frametitle{cpuacct}
+    \autotitle
     \begin{itemize}
         \item \verb|cat /sys/fs/cgroup/cpuacct/cpuacct.stat|
         \item \verb|cat /sys/fs/cgroup/cpuacct/cpuacct.usage|
@@ -336,8 +355,10 @@ $ awk '/cgroup/{sub(".*,","",$4);print$2,$3,$4}' /proc/mounts
     \end{itemize}
 \end{frame}
 
+\subsubsection{blkio}
+
 \begin{frame}[fragile]
-    \frametitle{blkio}
+    \autotitle
     \verb!ls /sys/fs/cgroup/blkio/blkio.* | grep -v '_recursive'!
     \begin{multicols}{2}
         \begin{itemize}
@@ -364,8 +385,10 @@ $ awk '/cgroup/{sub(".*,","",$4);print$2,$3,$4}' /proc/mounts
     \end{multicols}
 \end{frame}
 
+\subsubsection{memory}
+
 \begin{frame}[fragile]
-    \frametitle{memory}
+    \autotitle
     \begin{itemize}
         \item \verb|cat /sys/fs/cgroup/memory/memory.usage_in_bytes|
         \item \verb|cat /sys/fs/cgroup/memory/memory.limit_in_bytes|
@@ -374,7 +397,7 @@ $ awk '/cgroup/{sub(".*,","",$4);print$2,$3,$4}' /proc/mounts
 \end{frame}
 
 \begin{frame}[fragile]
-    \frametitle{memory}
+    \autotitle
     \verb|awk '!/^total_/{print$1}' /sys/fs/cgroup/memory/memory.stat|
     \begin{multicols}{2}
         \begin{itemize}
@@ -400,8 +423,10 @@ $ awk '/cgroup/{sub(".*,","",$4);print$2,$3,$4}' /proc/mounts
     \end{multicols}
 \end{frame}
 
+\subsubsection{devices}
+
 \begin{frame}[fragile]
-    \frametitle{devices}
+    \autotitle
     \begin{itemize}
         \item \verb|cat /sys/fs/cgroup/devices/devices.list|
         \item \verb|echo 'a *:* rwm' > /sys/fs/cgroup/devices/devices.allow|
@@ -409,8 +434,10 @@ $ awk '/cgroup/{sub(".*,","",$4);print$2,$3,$4}' /proc/mounts
     \end{itemize}
 \end{frame}
 
+\subsubsection{freezer}
+
 \begin{frame}[fragile]
-    \frametitle{freezer}
+    \autotitle
     \begin{itemize}
         \item \verb|cat /sys/fs/cgroup/$child/freezer.state|
         \item \verb|echo FROZEN> /sys/fs/cgroup/$child/freezer.state|
@@ -418,8 +445,10 @@ $ awk '/cgroup/{sub(".*,","",$4);print$2,$3,$4}' /proc/mounts
     \end{itemize}
 \end{frame}
 
+\subsubsection{net\_cls}
+
 \begin{frame}[fragile]
-    \frametitle{net\_cls}
+    \autotitle
     \begin{itemize}
         \item \verb|cat /sys/fs/cgroup/net_cls/net_cls.classid|
         \item \verb|maj=0001; min=0001; cls=0x$maj$min|
@@ -427,8 +456,10 @@ $ awk '/cgroup/{sub(".*,","",$4);print$2,$3,$4}' /proc/mounts
     \end{itemize}
 \end{frame}
 
+\subsubsection{pid}
+
 \begin{frame}[fragile]
-    \frametitle{pid}
+    \autotitle
     \begin{itemize}
         \item \verb|cat /sys/fs/cgroup/pids/pids.current|
         \item \verb|echo 2 > /sys/fs/cgroup/pids/pids.max|
@@ -438,7 +469,7 @@ $ awk '/cgroup/{sub(".*,","",$4);print$2,$3,$4}' /proc/mounts
 \subsection{namespaces}
 
 \begin{frame}
-    \frametitle{namespaces}
+    \autotitle
     \begin{itemize}
         \only<1>{
             \item \texttt{unshare(2)}
@@ -479,8 +510,10 @@ $ awk '/cgroup/{sub(".*,","",$4);print$2,$3,$4}' /proc/mounts
     }
 \end{frame}
 
+\subsubsection{mount}
+
 \begin{frame}
-    \frametitle{mount}
+    \autotitle
     \begin{itemize}
         \item \texttt{CLONE\_NEWNS}
         \item linux 2.4.19 (2002)
@@ -491,8 +524,10 @@ $ awk '/cgroup/{sub(".*,","",$4);print$2,$3,$4}' /proc/mounts
     \end{itemize}
 \end{frame}
 
+\subsubsection{uts}
+
 \begin{frame}
-    \frametitle{uts}
+    \autotitle
     \begin{itemize}
         \item \texttt{CLONE\_NEWUTS}
         \item linux 2.6.19 (2006)
@@ -503,8 +538,10 @@ $ awk '/cgroup/{sub(".*,","",$4);print$2,$3,$4}' /proc/mounts
     \end{itemize}
 \end{frame}
 
+\subsubsection{ipc}
+
 \begin{frame}
-    \frametitle{ipc}
+    \autotitle
     \begin{itemize}
         \item \texttt{CLONE\_NEWIPC}
         \item linux 2.6.19 (2006) / linux 2.6.30 (2009)
@@ -516,8 +553,10 @@ $ awk '/cgroup/{sub(".*,","",$4);print$2,$3,$4}' /proc/mounts
     \end{itemize}
 \end{frame}
 
+\subsubsection{pid}
+
 \begin{frame}
-    \frametitle{pid}
+    \autotitle
     \begin{itemize}
         \item \texttt{CLONE\_NEWPID}
         \item linux 2.6.24 (2008)
@@ -539,8 +578,10 @@ $ awk '/cgroup/{sub(".*,","",$4);print$2,$3,$4}' /proc/mounts
     \end{itemize}
 \end{frame}
 
+\subsubsection{net}
+
 \begin{frame}
-    \frametitle{net}
+    \autotitle
     \begin{itemize}
         \item \texttt{CLONE\_NEWNET}
         \item linux 2.6.24 (2008)
@@ -562,8 +603,10 @@ $ awk '/cgroup/{sub(".*,","",$4);print$2,$3,$4}' /proc/mounts
     \end{itemize}
 \end{frame}
 
+\subsubsection{user}
+
 \begin{frame}
-    \frametitle{user}
+    \autotitle
     \begin{itemize}
         \item \texttt{CLONE\_NEWUSER}
         \item linux 2.6.23 (2007)
@@ -579,8 +622,10 @@ $ awk '/cgroup/{sub(".*,","",$4);print$2,$3,$4}' /proc/mounts
     \end{itemize}
 \end{frame}
 
+\subsubsection{demo}
+
 \begin{frame}[fragile]
-    \frametitle{demo}
+    \autotitle
     \begin{semiverbatim}
         \only<1>{
 # create containers
@@ -624,7 +669,7 @@ brctl addif br0 h1 h2
 \end{frame}
 
 \begin{frame}[fragile]
-    \frametitle{demo}
+    \autotitle
     \begin{figure}
         \centering
         \begin{varwidth}{\linewidth}
@@ -641,12 +686,12 @@ brctl addif br0 h1 h2
     \end{figure}
 \end{frame}
 
-\section{Security}
+\section{security}
 
-\subsection{uid 0}
+\subsection{root}
 
 \begin{frame}
-    \frametitle{uid 0}
+    \autotitle
     \only<1>{
         \begin{itemize}
             \item don't use
@@ -669,10 +714,10 @@ brctl addif br0 h1 h2
     }
 \end{frame}
 
-\subsection{Applications}
+\subsection{applications}
 
 \begin{frame}
-    \frametitle{Applications}
+    \autotitle
     \begin{itemize}
         \item
             Most containers execute a specific task, instead of a complete
@@ -686,7 +731,7 @@ brctl addif br0 h1 h2
 \end{frame}
 
 \begin{frame}
-    \frametitle{Applications}
+    \autotitle
     \only<1>{
         syscalls
         \begin{itemize}
@@ -732,10 +777,10 @@ brctl addif br0 h1 h2
     }
 \end{frame}
 
-\section{References}
+\section{references}
 
 \begin{frame}
-    \frametitle{References}
+    \autotitle
     \begin{itemize}
         \item
             \href
@@ -773,7 +818,7 @@ brctl addif br0 h1 h2
 \end{frame}
 
 \begin{frame}
-    \frametitle{References (images)}
+    \autotitle
     \begin{itemize}
         \item
             \href
