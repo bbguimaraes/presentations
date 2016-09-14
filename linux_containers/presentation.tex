@@ -24,10 +24,11 @@
     \fi}}
 
 \title{Linux containers}
+\subtitle{You are not expected to understand this}
 
 \author{Bruno Barcarol Guimarães}
 \institute[]{\textit{bbguimaraes.com}}
-\date{2015-07-10}
+\date{2016-10-06}
 
 \begin{document}
 
@@ -40,6 +41,98 @@
 \begin{frame}
     \autotitle
     \tableofcontents
+\end{frame}
+
+\subsection{introduction}
+
+\begin{frame}
+    \autotitle
+    You are not expected to understand this.
+\end{frame}
+
+\begin{frame}
+    \autotitle
+    \begin{quote}
+        You are not expected to understand this.
+    \end{quote}
+    Dennis Ritchie
+    \note{
+        Dennis Ritchie was a colleague of Ken Thompson (creator of UNIX), at
+        Bell Labs, AT\&T.
+        \\~\\
+        He was one of the earliest contributors to UNIX and creator of the C
+        programming language.}
+\end{frame}
+
+\begin{frame}[fragile]
+    \autotitle
+    \begin{quote}
+        \tiny
+        \begin{verbatim}
+/*
+ * Switch to stack of the new process and set up
+ * his segmentation registers.
+ */
+retu(rp->p_addr);
+sureg();
+/*
+ * If the new process paused because it was
+ * swapped out, set the stack level to the last call
+ * to savu(u_ssav).  This means that the return
+ * which is executed immediately after the call to aretu
+ * actually returns from the last routine which did
+ * the savu.
+ *
+ * You are not expected to understand this.
+ */
+if(rp->p_flag&SSWAP) {
+    rp->p_flag =& ~SSWAP;
+    aretu(u.u_ssav);
+}
+/*
+ * The value returned here has many subtle implications.
+ * See the newproc comments.
+ */
+return(1);
+        \end{verbatim}
+    \end{quote}
+    Dennis Ritchie, Sixth Edition Unix (1975)
+    \cite{dennis_you_are_not_expected}
+\end{frame}
+
+\begin{frame}
+    \autotitle
+    \begin{quote}
+        "You are not expected to understand this" was intended as a remark in
+        the spirit of "This won't be on the exam," rather than as an impudent
+        challenge.
+    \end{quote}
+    Dennis Ritchie
+    \cite{dennis_you_are_not_expected_explanation}
+\end{frame}
+
+\begin{frame}
+    \autotitle
+    \begin{quote}
+        The real problem is that we didn't understand what was going on either.
+        \\~\\
+        \scriptsize
+        The savu/retu mechanism for doing process exchange was fundamentally
+        broken because it depended on switching to a previous stack frame and
+        executing function return code in a different procedure from the one
+        that saved the earlier state.  This worked on the PDP-11 because its
+        compiler always used the same context-save mechanism; with the
+        Interdata compiler, the procedure return code differed depending on
+        which registers were saved.
+        \\~\\
+        So, for Steve Johnson and me, trying to move the kernel for the first
+        time to a new machine, this code was indeed on the exam.  It took about
+        a week of agonizing before we finally convinced each other that the
+        mechanism was wrong and no fiddling with the compiler was useful.  We
+        redid the coroutine control-passing primitives altogether, and this
+        code section, and the comment, passed into history.
+    \end{quote}
+    Dennis Ritchie
 \end{frame}
 
 \subsection{pre-history}
@@ -1004,6 +1097,14 @@ lrwxrwxrwx. 1 root root 0 Sep  2 19:56 uts -> 'uts:[4026531838]'
 \begin{frame}[allowframebreaks]
     \autotitle
     \begin{thebibliography}{10}
+        \bibitem{dennis_you_are_not_expected}
+            \href
+                {http://minnie.tuhs.org/cgi-bin/utree.pl?file=V6/usr/sys/ken/slp.c}
+                {/usr/sys/ken/slp.c - Sixth Edition Unix source code}
+        \bibitem{dennis_you_are_not_expected_explanation}
+            \href
+                {https://www.bell-labs.com/usr/dmr/www/odd.html}
+                {Odd Comments and Strange Doings in Unix}
         \bibitem{kamp_varnish}
             \href
                 {https://www.varnish-cache.org/news/20160425_website.html}
