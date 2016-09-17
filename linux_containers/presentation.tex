@@ -45,6 +45,264 @@
     \tableofcontents
 \end{frame}
 
+\subsection{pre-history}
+
+\begin{frame}
+    \autotitle
+    \begin{quote}
+        You have probably heard about Docker and Containers, but FreeBSD
+        have had jails since I wrote them in 1998.
+    \end{quote}
+    Poul-Henning Kamp
+    \cite{kamp_varnish}
+\end{frame}
+
+\subsubsection{time-sharing}
+
+\begin{frame}
+    \autotitle
+    \begin{itemize}
+        \item
+            First appearance of the term by Josh Backus in a MIT Summer Session
+            (1954)
+        \item
+            Project to implement a time-sharing system started by John McCarthy
+            at MIT (1959)
+        \item Compatible Time-Sharing System, CTSS (1961)
+    \end{itemize}
+    \note{
+        The concepts behind containers date back to the first time-sharing
+        systems in the early days of modern computer history.}
+\end{frame}
+
+\begin{frame}
+    \autotitle
+    \begin{picture}(330, 200)
+        \put(0, 0){
+            \includegraphics[width=.45\linewidth]
+                {img/advanced_coding_techniques0.jpg}}
+        \only<2>{
+            \put(25, 5){
+                \includegraphics
+                    [width=.90\linewidth]
+                    {img/advanced_coding_techniques1.png}}}
+    \end{picture}
+\end{frame}
+
+\begin{frame}
+    \autotitle
+    \begin{quote}
+        Mr. P. F. Williams said that his firm is trying to decide on a
+        computer to use.  They want something intermediate between an
+        IBM 650 and 704.  The 704 seems too large: they would not be
+        able to keep it busy.  Josh Backus said that by time sharing, a
+        big computer could be used as several small ones; [...]
+    \end{quote}
+    Computer Advanced Coding Techniques, MIT Summer Session
+    \cite{mit_summer_session}
+    \note{
+        This was in 1954, fifteen years before UNIX.  The basic concept,
+        however, is still relevant.}
+\end{frame}
+
+\begin{frame}
+    \autotitle
+    \begin{quote}
+        By allowing a large number of users to interact concurrently with a
+        single computer, time-sharing dramatically lowered the cost of
+        providing computing capability.  [...] While any single user would make
+        inefficient use of a computer, a large group of users together would
+        not.
+    \end{quote}
+    Wikipedia \cite{wikipedia_time_sharing}
+\end{frame}
+
+\subsection{history}
+
+\subsubsection{chroot}
+
+\begin{frame}
+    \autotitle
+    \begin{itemize}
+        \item \texttt{chroot(2)}
+        \item Changes the root directory of the calling process
+        \item Compartmentalize the filesystem
+        \item Didn't provide any other isolation mechanisms
+        \item Very trivial to "escape"
+        \item The goal was not security
+        \item Actually, no one really knows what the goal was
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \autotitle
+    \begin{quote}
+        [CHROOT]
+        \\~\\
+        Dr. Marshall Kirk Mckusick, private communication: "According to the
+        SCCS logs, the chroot call was added by Bill Joy on March 18, 1982
+        approximately 1.5 years before 4.2BSD was released.  That was well
+        before we had ftp servers of any sort (ftp did not show up in the
+        source tree until January 1983).  My best guess as to its purpose was
+        to allow Bill to chroot into the /4.2BSD build directory and build a
+        system using only the files, include files, etc contained in that tree.
+        That was the only use of chroot that I remember from the early days."
+    \end{quote}
+    Poul-Henning Kamp, Robert Watson \cite{kamp_jails}
+    \note{
+        In 1975, Dennis Ritchie was a visiting professor at Berkeley, where he
+        met Bill Joy, then a student.
+        \\~\\
+        From the work that was done at this period would result the Berkeley
+        Software Distribution (BSD).
+        \\~\\
+        Bill Joy is the author of vi and csh, and in 1982 also co-founded of
+        Sun Microsystems.}
+\end{frame}
+
+\subsubsection{jails}
+
+\begin{frame}
+    \autotitle
+    \begin{itemize}
+        \item \texttt{jail(2)}
+        \item Added to FreeBSD by Poul-Henning Kamp (1999)
+        \item "Confining the omnipotent root"
+        \item
+            Created to address the problem of needing many machines, each
+            almost idle, to have different versions of apache, mysql, perl etc.
+        \item
+            "Trivial extension" to \texttt{chroot(2)} to become "light-weight
+            virtual 'machines'"
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \autotitle
+    \begin{quote}
+        The FreeBSD "Jail" facility provides the ability to partition the
+        operating system environment, while maintaining the simplicity of the
+        UNIX "root" model.  In Jail, users with privilege find that the scope
+        of their requests is limited to the jail, allowing system
+        administrators to delegate management capabilities for each virtual
+        machine environment.
+    \end{quote}
+    Poul-Henning Kamp, Robert Watson \cite{kamp_jails}
+\end{frame}
+
+\begin{frame}
+    \autotitle
+    \begin{itemize}
+        \item "one-way mirror effect"
+        \begin{itemize}
+            \item
+                unjailed processes can see jailed processes, send signals,
+                attach debuggers, etc. (still subject to Unix access controls)
+            \item
+                jailed processes can't see or interact with processes outside,
+                either unjailed or in other jails
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \autotitle
+    \begin{quote}
+        If somebody breaks into your computer, you face a nasty set of
+        problems. For instance if you open a terminal connection, you may be
+        talking to their special version of the sshd(8) daemon, and who knows
+        what that does?
+        \\~\\
+        If you are running on perfectly virtualized servers, such as VMware,
+        Xen or similar, you are as much subject to these problems as you are
+        with dedicated hardware.
+        \\~\\
+        But if you put your outward facing services in a jail, you can
+        comfortably log in using the unadultered sshd(8) in the unjailed part
+        of the system, and see what the attackers are up to, while they cannot
+        see you.
+    \end{quote}
+    Poul-Henning Kamp \cite{kamp_sagas_jails}
+\end{frame}
+
+\subsubsection{linux}
+
+\begin{frame}
+    \autotitle
+    \begin{itemize}
+        \item Virtuozzo
+        \begin{itemize}
+            \item SWsoft, now Parallels (2000)
+            \item originally proprietary
+            \item
+                switched to open-core (OpenVZ, GPL) model (2005) \cite{openvz}
+        \end{itemize}
+        \item Virtual private servers and security contexts
+        \begin{itemize}
+            \item Jacques Gélinas (2001) \cite{virtual_private_servers}
+        \end{itemize}
+        \item Linux-VServer
+        \begin{itemize}
+            \item Herbert Pötzl (2002) \cite{linux_vserver}
+        \end{itemize}
+        \item all require (to this day) a patched kernel
+    \end{itemize}
+\end{frame}
+
+\subsubsection{zones}
+
+\begin{frame}
+    \autotitle
+    \begin{itemize}
+        \item \texttt{zone(2)}
+        \item Solaris 10 (2004)
+        \item Proprietary, open-sourced (CDDL) as OpenSolaris (2005)
+        \item Integrated at the operating system level
+        \item Server consolidation
+        \begin{itemize}
+            \item namespace isolation
+            \item security isolation
+            \item quality of service guarantees
+            \item account for resource utilization
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \autotitle
+    \begin{quote}
+        Managing zones is not complicated.  Figure 2 shows how to create a
+        simple, non-networked zone called lisa with a file system hierarchy
+        rooted at /aux0/lisa, install the zone, and boot it.  Booting a zone
+        causes the init daemon for the zone to be launched.  At that point, the
+        standard system services such as cron, sendmail, and inetd are
+        launched.
+    \end{quote}
+    Daniel Price, Andrew Tucker \cite{solaris_zones}
+\end{frame}
+
+\begin{frame}
+    \autotitle
+    \begin{itemize}
+        \item Platform administrator vs. application administrator systems
+        \item Installation
+        \begin{itemize}
+            \item package-manager aware
+            \item packages can be managed from both the global and local zone
+            \item reuses (copy or hard-link) files from the global zone
+            \item
+                sparse-root zones: \texttt{lofs} \texttt{/usr}, \texttt{/lib},
+                \texttt{/sbin}, \texttt{/platform}
+        \end{itemize}
+        \item Branded zones
+        \begin{itemize}
+            \item syscall translation layer
+            \item allows executing non-native binaries
+            \item \texttt{solaris8}, \texttt{solaris9}, \texttt{lx}
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
 \subsection{technologies}
 
 \begin{frame}
@@ -780,6 +1038,16 @@ brctl addif br0 h1 h2
 \section{references}
 
 \begin{frame}
+    \begin{quote}
+        These two papers are important because they don't just capture what was
+        done, but why it was done.  This is really, really, really important.
+        And if you are working on an important technology, please do this.
+        Because when we don't have it, we have javascript.
+    \end{quote}
+    Bryan Cantrill \cite{cantrill_jails_zones}
+\end{frame}
+
+\begin{frame}
     \autotitle
     \begin{itemize}
         \item
@@ -829,6 +1097,53 @@ brctl addif br0 h1 h2
                 {http://blog.docker.com/2014/03/docker-0-9-introducing-execution-drivers-and-libcontainer/}
                 {Docker drivers}
     \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]
+    \autotitle
+    \begin{thebibliography}{10}
+        \bibitem{kamp_varnish}
+            \href
+                {https://www.varnish-cache.org/news/20160425_website.html}
+                {Varnish - How our website works}
+        \bibitem{mit_summer_session}
+            \href
+                {http://bitsavers.org/pdf/mit/summer_session_1954/Digital_Computers_Advanced_Coding_Techniques_Summer_1954.pdf}
+                {MIT - Computer Advanced Coding Techniques}
+        \bibitem{wikipedia_time_sharing}
+            \href
+                {https://en.wikipedia.org/wiki/Time-sharing}
+                {Wikipedia - Time-sharing}
+        \bibitem{kamp_jails}
+            \href
+                {http://phk.freebsd.dk/pubs/sane2000-jail.pdf}
+                {Jails: Confining the omnipotent root}
+        \bibitem{kamp_sagas_jails}
+            \href
+                {http://phk.freebsd.dk/sagas/jails.html}
+                {Jails: High value but shitty Virtualization}
+        \bibitem{openvz}
+            \href
+                {https://openvz.org}
+                {OpenVZ}
+        \bibitem{virtual_private_servers}
+            \href
+                {http://www.solucorp.qc.ca/miscprj/s_context.hc}
+                {Virtual private servers and security contexts}
+        \bibitem{linux_vserver}
+            \href
+                {http://linux-vserver.org/Paper}
+                {Linux-VServer}
+        \bibitem{solaris_zones}
+            \href
+                {https://www.usenix.org/event/lisa04/tech/full_papers/price/price.pdf}
+                {Daniel Price, Andrew Tucker - Solaris Zones: Operating System
+                    Support for Consolidating Commercial Workloads}
+        \bibitem{cantrill_jails_zones}
+            \href
+                {https://www.youtube.com/watch?v=hgN8pCMLI2U}
+                {Bryan Cantrill - Jails and Solaris Zones}
+    \end{thebibliography}
 \end{frame}
 
 \end{document}
