@@ -14,8 +14,6 @@
 %\setbeameroption{show notes on second screen}
 % Stop messing with my single quotes!
 \usepackage{upquote}
-% Multi-column itemize.
-\usepackage{multicol}
 
 \newcommand{\autotitle}
 {\frametitle{
@@ -613,43 +611,126 @@ struct seccomp_data {
     \autotitle
     \begin{itemize}
         \item linux 2.6.24 (2007)
-        \item resource limiting/reservation
-        \item accounting/auditing
+        \item
+            fine-grained resource partitioning among competing (groups of)
+            processes
+        \begin{itemize}
+            \item resource limiting/reservation
+            \item accounting/auditing
+        \end{itemize}
+        \item
+            expanded the concept of cpusets that was already present in the
+            kernel (2004)
+        \item
+            no new system calls, all the management is performed through a
+            virtual filesystem
+        \item process grouping based on hierarchies (trees)
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \autotitle
+    \begin{itemize}
+        \item v2 in linux 4.5 (2016-03-14)
+        \item unified hierarchy
+        \item process granularity
+        \item processes only on leaf nodes
+        \item single arbiter process
+        \item general cleanup
     \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]
     \autotitle
-    \verb|awk 'NR>1{print$1}' /proc/cgroups|
-    \begin{multicols}{3}
-        \begin{itemize}
-            \item cpuset
-            \item cpu
-            \item cpuacct
-            \item blkio
-            \item memory
-            \item devices
-            \item freezer
-            \item net\_cls
-            \item pids
-        \end{itemize}
-    \end{multicols}
+        \begin{verbatim}
+$ columnt -t /proc/cgroups
+#subsys_name  hierarchy  num_cgroups  enabled
+cpuset        10         10           1
+cpu           5          95           1
+cpuacct       5          95           1
+blkio         3          100          1
+memory        8          365          1
+devices       9          97           1
+freezer       11         10           1
+net_cls       4          10           1
+perf_event    7          10           1
+net_prio      4          10           1
+hugetlb       2          9            1
+pids          6          102          1
+    \end{verbatim}
 \end{frame}
 
 \begin{frame}[fragile]
     \autotitle
     \begin{verbatim}
-$ awk '/cgroup/{sub(".*,","",$4);print$2,$3,$4}' /proc/mounts
-/sys/fs/cgroup tmpfs mode=755
-/sys/fs/cgroup/systemd cgroup name=systemd
-/sys/fs/cgroup/blkio cgroup blkio
-/sys/fs/cgroup/cpu,cpuacct cgroup cpuacct
-/sys/fs/cgroup/net_cls cgroup net_cls
-/sys/fs/cgroup/pids cgroup pids
-/sys/fs/cgroup/cpuset cgroup cpuset
-/sys/fs/cgroup/devices cgroup devices
-/sys/fs/cgroup/freezer cgroup freezer
-/sys/fs/cgroup/memory cgroup memory
+$ awk '/cgroup/{print$2,$3}' /proc/mounts
+/sys/fs/cgroup tmpfs
+/sys/fs/cgroup/systemd cgroup
+/sys/fs/cgroup/blkio cgroup
+/sys/fs/cgroup/net_cls,net_prio cgroup
+/sys/fs/cgroup/cpu,cpuacct cgroup
+/sys/fs/cgroup/pids cgroup
+/sys/fs/cgroup/perf_event cgroup
+/sys/fs/cgroup/memory cgroup
+/sys/fs/cgroup/devices cgroup
+/sys/fs/cgroup/freezer cgroup
+/sys/fs/cgroup/cpuset cgroup
+    \end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+    \autotitle
+    \begin{verbatim}
+$ sed -n '/name=systemd/s/,\| /\n/gp' /proc/mounts
+cgroup
+/sys/fs/cgroup/systemd
+cgroup
+rw
+nosuid
+nodev
+noexec
+relatime
+xattr
+release_agent=/usr/lib/systemd/systemd-cgroups-agent
+name=systemd
+0
+0
+    \end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+    \autotitle
+    \begin{verbatim}
+$ ls -l /sys/fs/cgroup/systemd
+total 0
+-rw-r--r--.  1 root root 0 Sep  2 14:49 cgroup.clone_children
+-rw-r--r--.  1 root root 0 Sep  2 14:49 cgroup.procs
+-r--r--r--.  1 root root 0 Sep  2 14:49 cgroup.sane_behavior
+drwxr-xr-x.  2 root root 0 Sep  2 11:35 init.scope
+drwxr-xr-x.  2 root root 0 Sep  2 12:13 machine.slice
+-rw-r--r--.  1 root root 0 Sep  2 14:49 notify_on_release
+-rw-r--r--.  1 root root 0 Sep  2 14:49 release_agent
+drwxr-xr-x. 92 root root 0 Sep  2 13:05 system.slice
+-rw-r--r--.  1 root root 0 Sep  2 14:49 tasks
+drwxr-xr-x.  3 root root 0 Sep  2 11:35 user.slice
+    \end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+    \autotitle
+    \scriptsize
+    \begin{verbatim}
+$ awk '$3=="cgroup"&&!/systemd/{print$2,$4}' /proc/mounts
+/sys/fs/cgroup/cpuset rw,nosuid,nodev,noexec,relatime,cpuset
+/sys/fs/cgroup/memory rw,nosuid,nodev,noexec,relatime,memory
+/sys/fs/cgroup/net_cls,net_prio rw,nosuid,nodev,noexec,relatime,net_cls,net_prio
+/sys/fs/cgroup/freezer rw,nosuid,nodev,noexec,relatime,freezer
+/sys/fs/cgroup/blkio rw,nosuid,nodev,noexec,relatime,blkio
+/sys/fs/cgroup/cpu,cpuacct rw,nosuid,nodev,noexec,relatime,cpu,cpuacct
+/sys/fs/cgroup/hugetlb rw,nosuid,nodev,noexec,relatime,hugetlb
+/sys/fs/cgroup/perf_event rw,nosuid,nodev,noexec,relatime,perf_event
+/sys/fs/cgroup/devices rw,nosuid,nodev,noexec,relatime,devices
+/sys/fs/cgroup/pids rw,nosuid,nodev,noexec,relatime,pids
     \end{verbatim}
 \end{frame}
 
@@ -657,144 +738,264 @@ $ awk '/cgroup/{sub(".*,","",$4);print$2,$3,$4}' /proc/mounts
 
 \begin{frame}[fragile]
     \autotitle
-    \begin{itemize}
-        \item \verb|cat /sys/fs/cgroup/cpuset/cpuset.mems|
-        \item \verb|echo 0-1 > /sys/fs/cgroup/cpuset/cpuset.mems|
-        \item \verb|cat /sys/fs/cgroup/cpuset/cpuset.cpus|
-        \item \verb|echo 3-5 > /sys/fs/cgroup/cpuset/cpuset.cpus|
-    \end{itemize}
+    \begin{verbatim}
+$ cat /sys/fs/cgroup/cpuset/cpuset.cpus
+0-3
+$ echo 0-1 > /sys/fs/cgroup/cpuset/cpuset.cpus
+$ cat /sys/fs/cgroup/cpuset/cpuset.mems
+0
+$ echo 3-5 > /sys/fs/cgroup/cpuset/cpuset.mems
+    \end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+    \autotitle
+    \begin{verbatim}
+$ ls /sys/fs/cgroup/cpuset | grep 'cpuset\.'
+cpuset.cpu_exclusive
+cpuset.cpus
+cpuset.effective_cpus
+cpuset.effective_mems
+cpuset.mem_exclusive
+cpuset.mem_hardwall
+cpuset.memory_migrate
+cpuset.memory_pressure
+cpuset.memory_pressure_enabled
+cpuset.memory_spread_page
+cpuset.memory_spread_slab
+cpuset.mems
+cpuset.sched_load_balance
+cpuset.sched_relax_domain_level
+    \end{verbatim}
 \end{frame}
 
 \subsubsection{cpu}
 
 \begin{frame}[fragile]
     \autotitle
-    \begin{itemize}
-        \item \verb|cat /sys/fs/cgroup/cpu/cpu.shares|
-        \item \verb|echo 1024 > /sys/fs/cgroup/cpu/cpu.shares|
-    \end{itemize}
+    \begin{verbatim}
+$ cat /sys/fs/cgroup/cpu/cpu.shares
+1024
+$ echo 2048 > /sys/fs/cgroup/cpu/cpu.shares
+$ ls /sys/fs/cgroup/cpu | grep 'cpu\.cfs_'
+cpu.cfs_period_us
+cpu.cfs_quota_us
+$ awk '{print$1}' /sys/fs/cgroup/cpu/cpu.stat
+nr_periods
+nr_throttled
+throttled_time
+    \end{verbatim}
 \end{frame}
 
 \subsubsection{cpuacct}
 
 \begin{frame}[fragile]
     \autotitle
-    \begin{itemize}
-        \item \verb|cat /sys/fs/cgroup/cpuacct/cpuacct.stat|
-        \item \verb|cat /sys/fs/cgroup/cpuacct/cpuacct.usage|
-        \item \verb|cat /sys/fs/cgroup/cpuacct/cpuacct.usage_percpu|
-    \end{itemize}
+    \begin{verbatim}
+$ ls /sys/fs/cgroup/cpuacct | grep 'cpuacct\.'
+cpuacct.stat
+cpuacct.usage
+cpuacct.usage_percpu
+cpuacct.usage_percpu_sys
+cpuacct.usage_percpu_user
+cpuacct.usage_sys
+cpuacct.usage_user
+$ cat /sys/fs/cgroup/cpuacct/cpuacct.stat
+user 50513
+system 5274
+$ cat /sys/fs/cgroup/cpuacct/cpuacct.usage
+567909305094
+$ cat /sys/fs/cgroup/cpuacct/cpuacct.usage_percpu
+119426195198 182347519425 112831274244 155276137008 0 0 0 0 
+    \end{verbatim}
 \end{frame}
 
 \subsubsection{blkio}
 
 \begin{frame}[fragile]
     \autotitle
-    \verb!ls /sys/fs/cgroup/blkio/blkio.* | grep -v '_recursive'!
-    \begin{multicols}{2}
-        \begin{itemize}
-            \item blkio.io\_merged
-            \item blkio.io\_queued
-            \item blkio.io\_service\_bytes
-            \item blkio.io\_serviced
-            \item blkio.io\_service\_time
-            \item blkio.io\_wait\_time
-            \item blkio.leaf\_weight
-            \item blkio.leaf\_weight\_device
-            \item blkio.reset\_stats
-            \item blkio.sectors
-            \item blkio.throttle.io\_service\_bytes
-            \item blkio.throttle.io\_serviced
-            \item blkio.throttle.read\_bps\_device
-            \item blkio.throttle.read\_iops\_device
-            \item blkio.throttle.write\_bps\_device
-            \item blkio.throttle.write\_iops\_device
-            \item blkio.time
-            \item blkio.weight
-            \item blkio.weight\_device
-        \end{itemize}
-    \end{multicols}
+    \begin{verbatim}
+$ ls /sys/fs/cgroup/blkio \
+    | awk '/blkio\./&&!/recursive|throttle/'
+blkio.io_merged
+blkio.io_queued
+blkio.io_service_bytes
+blkio.io_serviced
+blkio.io_service_time
+blkio.io_wait_time
+blkio.leaf_weight
+blkio.leaf_weight_device
+blkio.reset_stats
+blkio.sectors
+blkio.time
+blkio.weight
+blkio.weight_device
+    \end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+    \autotitle
+    \begin{verbatim}
+$ ls /sys/fs/cgroup/blkio | grep 'blkio\.throttle'
+blkio.throttle.io_service_bytes
+blkio.throttle.io_serviced
+blkio.throttle.read_bps_device
+blkio.throttle.read_iops_device
+blkio.throttle.write_bps_device
+blkio.throttle.write_iops_device
+    \end{verbatim}
+\end{frame}
+
+\subsubsection{perf\_event}
+
+\begin{frame}[fragile]
+    \autotitle
+    \begin{verbatim}
+$ ls /sys/fs/cgroup/perf_event | grep -c 'perf_event\.'
+0
+    \end{verbatim}
 \end{frame}
 
 \subsubsection{memory}
 
 \begin{frame}[fragile]
     \autotitle
-    \begin{itemize}
-        \item \verb|cat /sys/fs/cgroup/memory/memory.usage_in_bytes|
-        \item \verb|cat /sys/fs/cgroup/memory/memory.limit_in_bytes|
-        \item \verb|echo $x > /sys/fs/cgroup/memory/memory.limit_in_bytes|
-    \end{itemize}
+    \begin{verbatim}
+$ cat /sys/fs/cgroup/memory/memory.usage_in_bytes
+3880935424
+$ cat /sys/fs/cgroup/memory/memory.limit_in_bytes
+9223372036854771712
+$ echo 1 > /sys/fs/cgroup/memory/memory.limit_in_bytes
+$ echo 1 > /sys/fs/cgroup/memory/memory.soft_limit_in_bytes
+    \end{verbatim}
+    \note{
+        Each page is charged to a group and can be shared between multiple
+        groups.
+        \\~\\
+        Crossing the \texttt{memory.limit\_in\_bytes} value causes the OOM
+        killer to be invoked, restricted to the processes on the cgroup.
+        \\~\\
+        Soft limits are minimum values that the controller will try to
+        guarantee.  Processes can go above the soft limits, but they will be
+        the first targets in a low-memory situation.}
 \end{frame}
 
 \begin{frame}[fragile]
     \autotitle
-    \verb|awk '!/^total_/{print$1}' /sys/fs/cgroup/memory/memory.stat|
-    \begin{multicols}{2}
-        \begin{itemize}
-            \item cache
-            \item rss
-            \item rss\_huge
-            \item mapped\_file
-            \item dirty
-            \item writeback
-            \item swap
-            \item pgpgin
-            \item pgpgout
-            \item pgfault
-            \item pgmajfault
-            \item inactive\_anon
-            \item active\_anon
-            \item inactive\_file
-            \item active\_file
-            \item unevictable
-            \item hierarchical\_memory\_limit
-            \item hierarchical\_memsw\_limit
-        \end{itemize}
-    \end{multicols}
+    \begin{verbatim}
+$ awk '!/^total_/{print$1}' /sys/fs/cgroup/memory/memory.stat | column
+cache                           inactive_anon
+rss                             active_anon
+rss_huge                        inactive_file
+mapped_file                     active_file
+dirty                           unevictable
+writeback                       hierarchical_memory_limit
+swap                            hierarchical_memsw_limit
+pgpgin                          recent_rotated_anon
+pgpgout                         recent_rotated_file
+pgfault                         recent_scanned_anon
+pgmajfault                      recent_scanned_file
+    \end{verbatim}
 \end{frame}
 
 \subsubsection{devices}
 
 \begin{frame}[fragile]
     \autotitle
-    \begin{itemize}
-        \item \verb|cat /sys/fs/cgroup/devices/devices.list|
-        \item \verb|echo 'a *:* rwm' > /sys/fs/cgroup/devices/devices.allow|
-        \item \verb|echo a > /sys/fs/cgroup/devices/devices.deny|
-    \end{itemize}
+    \begin{verbatim}
+$ # a - all,  c - char,  b - block
+$ # r - read, w - write, m - mknod
+$ cat /sys/fs/cgroup/devices/devices.list
+a *:* rwm
+$ echo a > /sys/fs/cgroup/devices/devices.deny
+$ # major:minor, 1:3 -> /dev/null
+$ echo 'c 1:3 rwm' > /sys/fs/cgroup/devices/devices.allow
+    \end{verbatim}
 \end{frame}
 
 \subsubsection{freezer}
 
 \begin{frame}[fragile]
     \autotitle
-    \begin{itemize}
-        \item \verb|cat /sys/fs/cgroup/$child/freezer.state|
-        \item \verb|echo FROZEN> /sys/fs/cgroup/$child/freezer.state|
-        \item \verb|echo THAWED > /sys/fs/cgroup/$child/freezer.state|
-    \end{itemize}
+    \begin{verbatim}
+$ ls /sys/fs/cgroup/freezer | grep -c 'freezer\.'
+0
+$ mkdir /sys/fs/cgroup/freezer/child
+$ cat /sys/fs/cgroup/child/freezer.state
+THAWED
+$ echo FROZEN > /sys/fs/cgroup/child/freezer.state
+$ echo THAWED > /sys/fs/cgroup/child/freezer.state
+    \end{verbatim}
 \end{frame}
 
 \subsubsection{net\_cls}
 
 \begin{frame}[fragile]
     \autotitle
-    \begin{itemize}
-        \item \verb|cat /sys/fs/cgroup/net_cls/net_cls.classid|
-        \item \verb|maj=0001; min=0001; cls=0x$maj$min|
-        \item \verb|echo $cls > /sys/fs/cgroup/net_cls/net_cls.classid|
-    \end{itemize}
+    \begin{verbatim}
+$ cat /sys/fs/cgroup/net_cls/net_cls.classid
+0
+$ maj=0001; min=0001
+$ echo 0x$maj$min > /sys/fs/cgroup/net_cls/net_cls.classid
+    \end{verbatim}
+    \note{
+        The \texttt{classid} is assigned to all (output) packets and can be
+        used for firewall rules and traffic shaping.}
+\end{frame}
+
+\subsubsection{net\_prio}
+
+\begin{frame}[fragile]
+    \autotitle
+    \begin{verbatim}
+$ cat /sys/fs/cgroup/net_prio/net_prio.prioidx
+1
+$ echo 2 > /sys/fs/cgroup/net_prio/net_prio.prioidx
+-bash: echo: write error: Invalid argument
+$ cat /sys/fs/cgroup/net_prio/net_prio.ifpriomap
+lo 0
+enp0s25 0
+$ echo enp0s25 5 > /sys/fs/cgroup/net_prio/net_prio.ifpriomap
+    \end{verbatim}
+    \note{
+        \texttt{net\_prio.prioidx} is only an informative kernel internal
+        value.
+        \\~\\
+        \texttt{net\_prio.ifpriomap} is used by the device's queueing
+        discipline.}
+\end{frame}
+
+\subsubsection{hugetlb}
+
+\begin{frame}[fragile]
+    \autotitle
+    \begin{verbatim}
+$ ls /sys/fs/cgroup/hugetlb | grep 'hugetlb\.'
+hugetlb.1GB.failcnt
+hugetlb.1GB.limit_in_bytes
+hugetlb.1GB.max_usage_in_bytes
+hugetlb.1GB.usage_in_bytes
+hugetlb.2MB.failcnt
+hugetlb.2MB.limit_in_bytes
+hugetlb.2MB.max_usage_in_bytes
+hugetlb.2MB.usage_in_bytes
+    \end{verbatim}
 \end{frame}
 
 \subsubsection{pid}
 
 \begin{frame}[fragile]
     \autotitle
-    \begin{itemize}
-        \item \verb|cat /sys/fs/cgroup/pids/pids.current|
-        \item \verb|echo 2 > /sys/fs/cgroup/pids/pids.max|
-    \end{itemize}
+    \begin{verbatim}
+$ ls /sys/fs/cgroup/pids | grep -c 'pids\.'
+0
+$ mkdir /sys/fs/cgroup/pids/child
+$ cat /sys/fs/cgroup/child/pids/pids.current
+0
+$ cat /sys/fs/cgroup/pids/pids.max
+max
+$ echo 2 > /sys/fs/cgroup/pids/pids.max
+    \end{verbatim}
 \end{frame}
 
 \subsection{namespaces}
@@ -802,43 +1003,50 @@ $ awk '/cgroup/{sub(".*,","",$4);print$2,$3,$4}' /proc/mounts
 \begin{frame}
     \autotitle
     \begin{itemize}
+        \item
+            Wraps a global resource, processes within the namespace appear to
+            have their own isolated instance.
+        \item
+            Operations that would affect the global resource are restricted to
+            the namespace of the process and don't affect other namespaces.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \autotitle
+    \begin{itemize}
         \only<1>{
             \item \texttt{unshare(2)}
             \item \texttt{clone(2)}
-            \item \texttt{setns(2)}
-        }
+            \item \texttt{setns(2)}}
         \only<2>{
             \item mnt (\texttt{CLONE\_NEWNS})
             \item uts (\texttt{CLONE\_NEWUTS})
             \item ipc (\texttt{CLONE\_NEWIPC})
             \item pid (\texttt{CLONE\_NEWPID})
             \item net (\texttt{CLONE\_NEWNET})
-            \item uid (\texttt{CLONE\_NEWUSER})
-        }
+            \item user (\texttt{CLONE\_NEWUSER})
+            \item cgroup (\texttt{CLONE\_NEWCGROUP})}
     \end{itemize}
-    \note<1>{
-        Namespaces are an isolation facility provided by the kernel.  They are
-        at the core of containers and are responsible for the isolation that
-        allows processes to execute on the same machine without interfering
-        with each other.
-        \\~\\
-        Namespaces can be manipulated using three system calls:
-        \begin{itemize}
-            \item
-                \texttt{unshare(2)} creates a namespace and associates the
-                process to it.
-            \item
-                \texttt{clone(2)} is similar to a \texttt{fork(2)} followed by
-                an \texttt{unshare(2)}.
-            \item
-                \texttt{setns(2)} associates a process with an existing
-                namespace.
-        \end{itemize}
-    }
-    \note<2>{
-        Each of this syscalls takes a \texttt{flag} argument which includes
-        these values for selecting which namespace(s) should created/joined.
-    }
+\end{frame}
+
+\begin{frame}[fragile]
+    \autotitle
+    \footnotesize
+    \begin{verbatim}
+# ls -l /proc/1/ns
+total 0
+lrwxrwxrwx. 1 root root 0 Sep  2 19:56 cgroup -> 'cgroup:[4026531835]'
+lrwxrwxrwx. 1 root root 0 Sep  2 19:56 ipc -> 'ipc:[4026531839]'
+lrwxrwxrwx. 1 root root 0 Sep  2 19:56 mnt -> 'mnt:[4026531840]'
+lrwxrwxrwx. 1 root root 0 Sep  2 19:56 net -> 'net:[4026531969]'
+lrwxrwxrwx. 1 root root 0 Sep  2 19:56 pid -> 'pid:[4026531836]'
+lrwxrwxrwx. 1 root root 0 Sep  2 19:56 user -> 'user:[4026531837]'
+lrwxrwxrwx. 1 root root 0 Sep  2 19:56 uts -> 'uts:[4026531838]'
+    \end{verbatim}
+    \note{
+        Keeping any of these files open or bind-mounted keeps the namespace
+        from being removed when there are no more processes inside it.}
 \end{frame}
 
 \subsubsection{mount}
@@ -851,6 +1059,7 @@ $ awk '/cgroup/{sub(".*,","",$4);print$2,$3,$4}' /proc/mounts
         \item \texttt{mount(2)/umount(2)}
         \item different processes have different visions of the file system
         \item ``\texttt{chroot(2)} on steroids''
+        \item masking of \texttt{/proc}, \texttt{/sys}, etc.
         \item sharing of mount points
     \end{itemize}
 \end{frame}
@@ -876,11 +1085,17 @@ $ awk '/cgroup/{sub(".*,","",$4);print$2,$3,$4}' /proc/mounts
     \begin{itemize}
         \item \texttt{CLONE\_NEWIPC}
         \item linux 2.6.19 (2006) / linux 2.6.30 (2009)
+        \item a.k.a. "the namespace no one knows what it's for"
         \item \texttt{svipc(7)}/\texttt{mq\_overview(7)}
-        \item isolation for the 32-bit resource ids
-        \item
-            sysV IPC has been mostly superseded, but some programs (e.g.
-            postgresql) still use it
+        \item isolation for the objects that are not identified by files
+        \item System V ipc and POSIX message queues have been mostly superseded
+        \note{
+            Some programs (notably, postgresql) still use it.
+            \\~\\
+            This was a problem with the original \texttt{jails(2)}
+            implementation, which didn't have System V IPC isolation.
+            Instances of postgresql on different jails but with the same uid
+            had access to each other's messages.}
     \end{itemize}
 \end{frame}
 
@@ -892,20 +1107,20 @@ $ awk '/cgroup/{sub(".*,","",$4);print$2,$3,$4}' /proc/mounts
         \item \texttt{CLONE\_NEWPID}
         \item linux 2.6.24 (2008)
         \item each pid inside a namespace is mapped to a pid outside
-        \item the same pid may appear on different namespaces
-        \item processes don't see processes of other namespaces
         \item
-            offers protection from pid-based syscalls like \texttt{kill(2)},
-            \texttt{ptrace(2)}, etc
+            can only be created by \texttt{clone(2)}ing, the child process
+            becomes pid 1 in the namespace
+        \item when pid 1 exits, all processes on the namespace are killed
+        \item
+            processes don't see processes of other namespaces and can't use
+            system calls such as \texttt{kill(2)}, \texttt{ptrace(2)}, etc
         \item
             \texttt{procfs} only shows information related to processes on the
-            namespace
-        \item migration between hosts
-        \item each namespace has its own pid 1
+            namespace of the process that mounted it
         \item
             can be nested: a parent namespace can see and affect processes on
             child namespaces; processes on a child namespace don't see and
-            can't do anything to processes on the parent
+            can't affect processes on the parents
     \end{itemize}
 \end{frame}
 
@@ -916,21 +1131,19 @@ $ awk '/cgroup/{sub(".*,","",$4);print$2,$3,$4}' /proc/mounts
     \begin{itemize}
         \item \texttt{CLONE\_NEWNET}
         \item linux 2.6.24 (2008)
-        \item each namespace has its own
-            \begin{itemize}
-                \item network devices (including \texttt{lo})
-                \item ip addresses
-                \item routing tables
-                \item \texttt{/proc/net}
-                \item ports
-                \item etc.
-            \end{itemize}
         \item
-            communication with the host or with other namespaces can be
-            implemented using \texttt{veth} pairs and/or bridge interfaces
+            each namespace has its own network devices (including \texttt{lo}),
+            ip addresses, routing tables, \texttt{/proc/net},
+            \texttt{/sys/class/net}, ports, etc.
+        \item
+            communication with the host or other namespaces can be
+            implemented using \texttt{veth} pairs and bridge interfaces
         \item
             \texttt{INADDR\_ANY} (a.k.a. \texttt{0.0.0.0}) means "any address
             on the current namespace"
+        \item
+            is also used for accounting (\texttt{iptables(8)},
+            \texttt{netlink(7)}, etc.), as interfaces are per-namespace
     \end{itemize}
 \end{frame}
 
@@ -941,15 +1154,36 @@ $ awk '/cgroup/{sub(".*,","",$4);print$2,$3,$4}' /proc/mounts
     \begin{itemize}
         \item \texttt{CLONE\_NEWUSER}
         \item linux 2.6.23 (2007)
-        \item finalized on kernel 3.8 (2013) $->$ $\sim$ five years
-        \item uid and gid isolation and mapping
-        \item \texttt{uid 0}
-        \item recursive
+        \item uid and gid mapping
+        \item can be nested
+        \item
+            the process receives the full set of capabilities upon entering a
+            user namespace, but has no capabilities on parent user namespaces
+        \item
+            since linux 3.8 (2013), unprivileged users can create a user
+            namespace
         \begin{itemize}
-            \item an unprivileged process can create a namespace
+            \item other namespaces can be created inside the user namespace
             \item \texttt{uid 0} inside the namespace
             \item<2> ö
         \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\subsubsection{cgroup}
+
+\begin{frame}
+    \autotitle
+    \begin{itemize}
+        \item \texttt{CLONE\_NEWCGROUP}
+        \item linux 4.6 (2016)
+        \item
+            the process' cgroup becomes the root of the cgroup hierarchy
+            inside the namespace
+        \item hides the cgroup hierarchy
+        \item
+            prevents modification of cgroup configuration on parent cgroups (if
+            file permission allowed it)
     \end{itemize}
 \end{frame}
 
@@ -1160,6 +1394,16 @@ brctl addif br0 h1 h2
 
 \begin{frame}
     \autotitle
+    \includegraphics[width=.4\linewidth]{img/lwn.png}
+    ~~
+    \cite{lwn}
+    ~~
+    \includegraphics[width=.4\linewidth]{img/tlpi.jpg}
+    \cite{tlpi}
+\end{frame}
+
+\begin{frame}[allowframebreaks]
+    \autotitle
     \begin{itemize}
         \item
             \href
@@ -1216,6 +1460,14 @@ brctl addif br0 h1 h2
             \href
                 {https://www.youtube.com/watch?v=hgN8pCMLI2U}
                 {Bryan Cantrill - Jails and Solaris Zones}
+        \bibitem{lwn}
+            \href
+                {lwn.net}
+                {https://lwn.net/subscribe/Info}
+        \bibitem{tlpi}
+            \href
+                {The Linux Programming Interface}
+                {http://www.man7.org/tlpi/}
     \end{thebibliography}
 \end{frame}
 
