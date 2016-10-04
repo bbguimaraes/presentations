@@ -526,12 +526,85 @@
 
 \section{implementation}
 
+\subsection{capabilities}
+
 \begin{frame}
     \autotitle
     \begin{itemize}
-        \item cgroups
-        \item namespaces
+        \item Attempted standardization with POSIX.1e (abandoned)
+        \item Implemented differently in each operating system
+        \begin{itemize}
+            \item Linux's capabilities (1999)
+            \item Solaris's privileges
+            \item FreeBSD's capsicum
+        \end{itemize}
     \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \autotitle
+    \begin{quote}
+        Starting with kernel 2.2, Linux divides the privileges traditionally
+        associated with superuser into distinct units, known as capabilities,
+        which can be independently enabled and disabled.
+    \end{quote}
+    \texttt{capabilities(7)}
+\end{frame}
+
+\begin{frame}
+    \autotitle
+    \begin{itemize}
+        \item Per-thread attribute
+        \item Set of 64 (originally 32) bits
+        \item Inherited from the parent
+        \item Can be acquired by executing a file with associated capabilities
+        \item
+            Examples: \texttt{CAP\_CHOWN}, \texttt{CAP\_KILL},
+            \texttt{CAP\_MKNOD}, \texttt{CAP\_NET\_RAW}, \texttt{CAP\_SETPCAP},
+            \texttt{CAP\_SYS\_ADMIN}, \texttt{CAP\_SYS\_TRACE}
+    \end{itemize}
+\end{frame}
+
+\subsection{seccomp}
+
+\begin{frame}
+    \autotitle
+    \begin{itemize}
+        \item \texttt{prctl(PR\_SET\_SECCOMP, 1)}
+        \begin{itemize}
+            \item linux 2.6.23 (2007)
+            \item
+                \texttt{read(2)}, \texttt{write(2)}, \texttt{\_exit(2)},
+                \texttt{sigreturn(2)}
+            \item \texttt{SIGKILL}
+        \end{itemize}
+        \item \texttt{seccomp(2)}
+        \begin{itemize}
+            \item linux 3.17 (2014)
+            \item \texttt{SECCOMP\_MODE\_STRICT}
+            \item \texttt{SECCOMP\_MODE\_FILTER}
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \autotitle
+    \begin{verbatim}
+/* <linux/seccomp.h> */
+/* input */
+struct seccomp_data {
+    int   nr;
+    __u32 arch;
+    __u64 instruction_pointer;
+    __u64 args[6];
+};
+/* output */
+#define SECCOMP_RET_KILL   /* ... */
+#define SECCOMP_RET_TRAP   /* ... */
+#define SECCOMP_RET_ERRNO  /* ... */
+#define SECCOMP_RET_TRACE  /* ... */
+#define SECCOMP_RET_ALLOW  /* ... */
+    \end{verbatim}
 \end{frame}
 
 \subsection{cgroups}
